@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.inject.Inject;
 
@@ -33,6 +34,7 @@ public class ProfileListActivity extends GuiceActivity {
 	@Inject private ProfileService profileService;
 
 	@InjectView(R.id.ListView01)             ListView lstProfiles;
+	@InjectView(R.id.txtProfileCount)		 TextView txtProfilesCount;
 	
 	private Profile currentlyLongClickedProfile = null;
 	
@@ -129,7 +131,9 @@ public class ProfileListActivity extends GuiceActivity {
         ListAdapter adapter = new ArrayAdapter<Profile>(this, 
                 android.R.layout.simple_list_item_1, 
                 profiles.toArray(new Profile[]{}));
-        lstProfiles.setAdapter(adapter);                
+        lstProfiles.setAdapter(adapter);        
+        
+        txtProfilesCount.setText(String.valueOf(profiles.size()));
 	}
 
     protected void onPause() {

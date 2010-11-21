@@ -6,6 +6,10 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.google.inject.Inject;
+
+import roboguice.activity.GuiceSplashActivity;
+
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -20,6 +24,8 @@ import android.util.Log;
 import de.syncdroid.FtpCopyJob;
 import de.syncdroid.Job;
 import de.syncdroid.SyncBroadcastReceiver;
+import de.syncdroid.db.model.Profile;
+import de.syncdroid.db.service.ProfileService;
 
 public class SyncService extends Service {
 	private static final String TAG = "SyncService";
@@ -29,8 +35,12 @@ public class SyncService extends Service {
 	public static final String INTENT_START_TIMER = "de.syncdroid.INTENT_START_TIMER";
 	public static final String INTENT_COLLECT_CELL_IDS = "de.syncdroid.COLLECT_CELL_IDS";
 	
+	@Inject private ProfileService profileService;
+	
 	private Queue<Job> jobs = new ConcurrentLinkedQueue<Job>();
 	private Set<GsmCellLocation> collectedLocations = new HashSet<GsmCellLocation>();
+	
+	private Boolean currentlyRunning = false;
 
     @Override
     public void onStart(Intent intent, int startId) {
@@ -41,7 +51,13 @@ public class SyncService extends Service {
 			if( intent.getAction().equals(TIMER_TICK)  )
 			{
 //				Log.d(TAG, "TIMER_TICK");
-//				syncIt();
+				if(currentlyRunning) {
+					Log.w(TAG, "WARNING: TIMER_TICKET while running syncIt");
+				} else {
+					currentlyRunning = true;
+					syncIt();
+					currentlyRunning = false;
+				}
 				
 				TelephonyManager tm = (TelephonyManager) getSystemService(Activity.TELEPHONY_SERVICE); 
 		        GsmCellLocation location = (GsmCellLocation) tm.getCellLocation();
@@ -90,9 +106,12 @@ public class SyncService extends Service {
 	private void syncIt() {
 		Log.d(TAG, "syncIt()");
 		
-		Job job = new FtpCopyJob(this);
-		job.execute();
-		jobs.add(job);
+		for(Profile profile : profileService.list()) {
+			Job job = new FtpCopyJob(this, profile);
+			job.execute();
+			jobs.add(job);
+		}
+		
 	}
 
 	@Override

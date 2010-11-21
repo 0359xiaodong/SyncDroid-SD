@@ -12,6 +12,8 @@ import java.util.List;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
+import de.syncdroid.db.model.Profile;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,13 +22,9 @@ import android.util.Log;
 public class FtpCopyJob implements Job {
 	private static final String TAG = "FtpCopyJob";
 	
-	private String host;
-	private String username;
-	private String password;
-	private String localPath;
-	private String remotePath;
 	private Long lastSync;
 	private Context context;
+	private Profile profile;
 	
 	public static final String PREF_FTP_PATH = "pref_ftp_path";
 	public static final String PREF_FTP_PASSWORD = "pref_ftp_password";
@@ -35,21 +33,16 @@ public class FtpCopyJob implements Job {
 	public static final String PREF_LOCAL_DIRECTORY = "pref_local_directory";
 	public static final String PREF_LASTSYNC = "pref_last_sync";
 	
-	public FtpCopyJob(Context context) {
+	public FtpCopyJob(Context context, Profile profile) {
 		this.context = context;
 		SharedPreferences prefs = context.getSharedPreferences(
 				ProfileEditActivity.TAG, Activity.MODE_PRIVATE);
 
-        localPath = prefs.getString(FtpCopyJob.PREF_LOCAL_DIRECTORY, "");
-        host = prefs.getString(FtpCopyJob.PREF_FTP_HOST, "");
-        username = prefs.getString(FtpCopyJob.PREF_FTP_USERNAMAE, "");
-        password = prefs.getString(FtpCopyJob.PREF_FTP_PASSWORD, "");
-        remotePath = prefs.getString(FtpCopyJob.PREF_FTP_PATH, "");
-        lastSync = prefs.getLong(FtpCopyJob.PREF_LASTSYNC, -1);
-
-        if(remotePath.startsWith("/")) {
-        	remotePath = remotePath.substring(1);
+        if(profile.getRemotePath().startsWith("/")) {
+        	profile.setRemotePath(profile.getRemotePath().substring(1));
         }
+        
+		this.profile = profile;
 	}
 
 	private class RemoteFile {
@@ -58,14 +51,6 @@ public class FtpCopyJob implements Job {
 		public File source;
 		public Long newest;
 		public List<RemoteFile> children = new ArrayList<FtpCopyJob.RemoteFile>();
-		
-//		public long getNewest() {
-////			Long newest = 0L;
-////			for (RemoteFile item : fileList) {
-////				newest = Math.max(newest, item.lastModified);
-////			}
-//			
-//		}
 	}
 	
 	private RemoteFile buildTree(File dir) {
@@ -124,7 +109,7 @@ public class FtpCopyJob implements Job {
 	public void execute() {
 		Log.d(TAG, "lastSync: " + lastSync);
 		try {
-			RemoteFile rootRemote = buildTree(new File(localPath));
+			RemoteFile rootRemote = buildTree(new File(profile.getLocalPath()));
 
 			if (lastSync > 0 && rootRemote.newest <= lastSync) {
 				Log.d(TAG, "nothing to do");
@@ -133,8 +118,8 @@ public class FtpCopyJob implements Job {
 
 			// connect to ftp server
 			FTPClient ftpClient = new FTPClient();
-			ftpClient.connect(InetAddress.getByName(host));
-			ftpClient.login(username, password);
+			ftpClient.connect(InetAddress.getByName(profile.getHostname()));
+			ftpClient.login(profile.getUsername(), profile.getPassword());
 			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 
 			uploadFiles(rootRemote, ftpClient, lastSync);
@@ -143,7 +128,6 @@ public class FtpCopyJob implements Job {
 			ftpClient.logout();
 			ftpClient.disconnect();
 		} catch(Exception e) {
-
 			Log.e(TAG, "whoa, exception: " + e);
 			
 			 /*
@@ -163,46 +147,6 @@ public class FtpCopyJob implements Job {
 	    SharedPreferences.Editor ed = context.getSharedPreferences(ProfileEditActivity.TAG, Activity.MODE_PRIVATE).edit();
 	    ed.putLong(FtpCopyJob.PREF_LASTSYNC, new Date().getTime());
 	    ed.commit();
-	}
-
-	public String getLocalDirectory() {
-		return localPath;
-	}
-
-	public void setLocalDirectory(String localDirectory) {
-		this.localPath = localDirectory;
-	}
-
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	public String getUser() {
-		return username;
-	}
-
-	public void setUser(String user) {
-		this.username = user;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getPath() {
-		return remotePath;
-	}
-
-	public void setPath(String path) {
-		this.remotePath = path;
 	}
 
 }
