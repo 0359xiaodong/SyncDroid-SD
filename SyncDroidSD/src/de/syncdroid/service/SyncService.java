@@ -7,9 +7,9 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.google.inject.Inject;
+import roboguice.inject.InjectorProvider;
 
-import roboguice.activity.GuiceSplashActivity;
+import com.google.inject.Inject;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -37,7 +37,7 @@ import de.syncdroid.SyncBroadcastReceiver;
 import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.service.ProfileService;
 
-public class SyncService extends Service {
+public class SyncService extends GuiceService {
 	private static final String TAG = "SyncService";
 	private static final int POLL_INTERVALL = 5000;
 	
@@ -82,6 +82,7 @@ public class SyncService extends Service {
 
     @Override
     public void onStart(Intent intent, int startId) {
+    	super.onStart(intent, startId);
 		// handle intents
 		if( intent != null && intent.getAction() != null ) 
 		{
@@ -162,11 +163,15 @@ public class SyncService extends Service {
     
 	private void syncIt() {
 		Log.d(TAG, "syncIt()");
-		
-		for(Profile profile : profileService.list()) {
-			Job job = new FtpCopyJob(this, profile);
-			job.execute();
-			jobs.add(job);
+
+		if(profileService != null) {
+			for(Profile profile : profileService.list()) {
+				Job job = new FtpCopyJob(this, profile);
+				job.execute();
+				jobs.add(job);
+			}
+		} else {
+			Log.e(TAG, "profileService is NULL");
 		}
 		
 	}

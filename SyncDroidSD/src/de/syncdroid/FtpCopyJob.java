@@ -18,6 +18,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 public class FtpCopyJob implements Job {
 	private static final String TAG = "FtpCopyJob";
@@ -130,17 +131,7 @@ public class FtpCopyJob implements Job {
 		} catch(Exception e) {
 			Log.e(TAG, "whoa, exception: " + e);
 			
-			 /*
-			 AlertDialog.Builder adb = new AlertDialog.Builder(this);
-			 
-			 Throwable cause = e;
-			 while(cause.getCause() != null) {
-				 cause = cause.getCause();
-			 }
-			 
-			 adb.setMessage(cause.getClass().getSimpleName() + ": " + cause.getMessage());
-			 adb.setNegativeButton("whatever", null);
-			 adb.show();*/
+			Toast.makeText(context, e.toString(), 2000);
 		}
 
 		Log.d(TAG, "upload success");
