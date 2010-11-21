@@ -22,32 +22,41 @@ public abstract class AbstractServiceImpl<T extends Model> implements Service<T>
 
 	@Override
 	public T findById(Long id) {
-		SQLiteDatabase db = databaseHelper.getWritableDatabase();
+		SQLiteDatabase db = databaseHelper.getReadableDatabase();
 		Cursor cursor = db.query(getTableName(), null, 
 				"id = ?", new String[] {id.toString()}, 
 				null, null, null, null);
 
+		if (cursor == null || cursor.moveToFirst() == false) {
+			return null;
+		}
+		
+		T obj = read(cursor);
+
 		if (cursor != null && !cursor.isClosed()) {
 			cursor.close();
-		}        
+		}		
 		
 		db.close();
 
-		return read(cursor);
+		return obj;
 	}
 
 	@Override
 	public List<T> list() {
 		List<T> lst = new ArrayList<T>();
 		
-		SQLiteDatabase db = databaseHelper.getWritableDatabase();
+		SQLiteDatabase db = databaseHelper.getReadableDatabase();
 		Cursor cursor = db.query(getTableName(), null, 
 				null, null, 
 				null, null, null, null);
 
 		if (cursor != null && cursor.moveToFirst()) {
 			do {
-				lst.add(read(cursor));
+				T obj = read(cursor);
+				if(obj != null) {
+					lst.add(obj);
+				}
 			} while (cursor.moveToNext());
 		}
 

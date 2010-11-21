@@ -14,6 +14,10 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 	protected Profile read(Cursor cursor) {
 		Profile obj = new Profile();
 		
+		if(cursor.getCount() == 0) {
+			return null;
+		}
+		
 		obj.setName(cursor.getString(cursor.getColumnIndex("name")));
 		obj.setId(cursor.getLong(cursor.getColumnIndex("id")));
 		//obj.setLastSync(cursor.get(cursor.getColumnIndex("lastSync")));

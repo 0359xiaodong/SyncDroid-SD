@@ -88,5 +88,7 @@ public class ProfileEditActivity extends GuiceActivity  {
 	public void onButtonSyncItClick(View view) {
         Log.i(TAG, "onButtonSyncItClick()");
         writePreferences();
+        
+        finish();
 	}
 }

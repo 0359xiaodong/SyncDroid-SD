@@ -16,6 +16,11 @@ public class Profile implements Model{
 	private String remotePath;
 	
 	
+	@Override
+	public String toString() {
+		return name;
+	}
+	
 	public Long getId() {
 		return id;
 	}
