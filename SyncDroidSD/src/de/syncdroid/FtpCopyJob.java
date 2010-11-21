@@ -36,8 +36,6 @@ public class FtpCopyJob implements Job {
 	
 	public FtpCopyJob(Context context, Profile profile) {
 		this.context = context;
-		SharedPreferences prefs = context.getSharedPreferences(
-				ProfileEditActivity.TAG, Activity.MODE_PRIVATE);
 
         if(profile.getRemotePath().startsWith("/")) {
         	profile.setRemotePath(profile.getRemotePath().substring(1));
