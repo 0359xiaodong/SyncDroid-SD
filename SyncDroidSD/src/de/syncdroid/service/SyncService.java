@@ -7,16 +7,11 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import roboguice.inject.InjectorProvider;
-
-import com.google.inject.Inject;
-
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -29,6 +24,9 @@ import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.google.inject.Inject;
+
 import de.syncdroid.FtpCopyJob;
 import de.syncdroid.Job;
 import de.syncdroid.ProfileListActivity;
@@ -94,7 +92,7 @@ public class SyncService extends GuiceService {
 					Log.w(TAG, "WARNING: TIMER_TICKET while running syncIt");
 				} else {
 					currentlyRunning = true;
-					syncIt();
+					//syncIt();
 					currentlyRunning = false;
 				}
 =======

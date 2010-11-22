@@ -1,26 +1,21 @@
 package de.syncdroid;
 
-import android.app.Application;
+import roboguice.config.AbstractAndroidModule;
+import android.content.Context;
 import de.syncdroid.db.service.ProfileService;
 import de.syncdroid.db.service.impl.ProfileServiceImpl;
-import roboguice.config.AbstractAndroidModule;
 
 public class SyncModule extends AbstractAndroidModule {
-	private Application application;
+	private Context context;
 	
-	public SyncModule(Application application) {
-		this.application = application;
-	}
-	
+	public SyncModule(Context context) {
+		this.context = context;
+	}	
 	
     @Override
     protected void configure() {
-        /*
-         * Here is the place to write the configuration specific to your application, i.e. your own custom bindings.
-         */
-        bind(ProfileService.class).to(ProfileServiceImpl.class);
-        
-        DatabaseHelper helper = new DatabaseHelper(application);
+        bind(ProfileService.class).to(ProfileServiceImpl.class);        
+        DatabaseHelper helper = new DatabaseHelper(context);
         bind(DatabaseHelper.class).toInstance(helper);
     }
 

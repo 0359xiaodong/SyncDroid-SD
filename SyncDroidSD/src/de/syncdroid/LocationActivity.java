@@ -3,7 +3,6 @@ package de.syncdroid;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.syncdroid.service.SyncService;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -22,6 +21,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import de.syncdroid.service.SyncService;
 
 
 public class LocationActivity extends Activity {
