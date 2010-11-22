@@ -2,6 +2,7 @@ package de.syncdroid;
 
 import roboguice.activity.GuiceActivity;
 import roboguice.inject.InjectView;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,14 +13,9 @@ import com.google.inject.Inject;
 import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.service.ProfileService;
 
-public class ProfileEditActivity extends GuiceActivity  {
+public class ProfileEditActivity extends AbstractActivity  {
 	static final String TAG = "ProfileActivity";
 
-	public static final String PARAM_ACTION = "action";
-	public static final String PARAM_ID = "id";
-
-	public static final String ACTION_EDIT = "edit";
-	public static final String ACTION_CREATE = "create";
 	
 	private Profile profile;
 	
@@ -39,26 +35,25 @@ public class ProfileEditActivity extends GuiceActivity  {
         setContentView(R.layout.profile_edit);
 
         Bundle bundle = getIntent().getExtras();
-        String action = bundle.getString(PARAM_ACTION);
         
-        if(ACTION_EDIT.equals(action)) {
-        	Long id = bundle.getLong(PARAM_ID);
+        if(getIntent().getAction().equals(Intent.ACTION_EDIT)) {
+        	Long id = bundle.getLong(EXTRA_ID);
         	profile = profileService.findById(id);
         	
         	if(profile == null) {
         		throw new RuntimeException(
         				"profile with id '" + id + "' not found");
         	}
-        } else if(ACTION_CREATE.equals(action)) {
+        } else if(getIntent().getAction().equals(Intent.ACTION_INSERT)) {
         	profile = new Profile();
         } else {
         	throw new RuntimeException("no action given to Activity");
         }
         
-        readPrefereces();
+        readFromDatabase();
     }
 
-	private void readPrefereces() {
+	private void readFromDatabase() {
         txtProfileName.setText(profile.getName());
         txtLocalDirectory.setText(profile.getLocalPath());
         txtFtpHost.setText(profile.getHostname());
@@ -67,14 +62,7 @@ public class ProfileEditActivity extends GuiceActivity  {
         txtFtpPath.setText(profile.getRemotePath());
 	}
 
-    protected void onPause() {
-        Log.i(TAG, "onPause()");
-        super.onPause();
-
-    	writePreferences();
-    }
-
-	private void writePreferences() {
+	private void writeToDatabase() {
 		profile.setName(txtProfileName.getText().toString());
 		profile.setLocalPath(txtLocalDirectory.getText().toString());
 		profile.setHostname(txtFtpHost.getText().toString());
@@ -84,10 +72,17 @@ public class ProfileEditActivity extends GuiceActivity  {
 		
 		profileService.saveOrUpdate(profile);
 	}
+    protected void onPause() {
+        Log.i(TAG, "onPause()");
+        super.onPause();
+
+    	writeToDatabase();
+    }
+
     
 	public void onButtonSyncItClick(View view) {
         Log.i(TAG, "onButtonSyncItClick()");
-        writePreferences();
+        writeToDatabase();
         
         finish();
 	}

@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,11 +26,10 @@ import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.service.ProfileService;
 import de.syncdroid.service.SyncService;
 
-public class ProfileListActivity extends GuiceActivity {
+public class ProfileListActivity extends AbstractActivity {
 	static final String TAG = "ProfileListActivity";
 	
 	@Inject private ProfileService profileService;
-
 	@InjectView(R.id.ListView01)             ListView lstProfiles;
 	@InjectView(R.id.txtProfileCount)		 TextView txtProfilesCount;
 	
@@ -54,8 +54,8 @@ public class ProfileListActivity extends GuiceActivity {
 				Log.d(TAG, "ProfileId: " + profile.getId());
 				
 				Intent myIntent = new Intent(ProfileListActivity.this, ProfileEditActivity.class);
-				myIntent.putExtra(ProfileEditActivity.PARAM_ID, profile.getId());
-				myIntent.putExtra(ProfileEditActivity.PARAM_ACTION, "edit");
+				myIntent.putExtra(ProfileEditActivity.EXTRA_ID, profile.getId());
+				myIntent.setAction(Intent.ACTION_EDIT);
 				ProfileListActivity.this.startActivity(myIntent);
 			 }});
 
@@ -96,8 +96,8 @@ public class ProfileListActivity extends GuiceActivity {
 		// We have only one menu option
 		case R.id.item01: {
 			Intent myIntent = new Intent(this, ProfileEditActivity.class);
-			myIntent.putExtra(ProfileEditActivity.PARAM_ACTION, ProfileEditActivity.ACTION_EDIT);
-			myIntent.putExtra(ProfileEditActivity.PARAM_ID, id);
+			myIntent.setAction(Intent.ACTION_EDIT);
+			myIntent.putExtra(ProfileEditActivity.EXTRA_ID, id);
 			startActivity(myIntent);
 			break;
 		}
@@ -155,8 +155,7 @@ public class ProfileListActivity extends GuiceActivity {
         Log.d(TAG, "onButtonSyncItClick()");
         
 		Intent intent = new Intent(this, ProfileEditActivity.class);
-		intent.putExtra(ProfileEditActivity.PARAM_ACTION, 
-				ProfileEditActivity.ACTION_CREATE);
+		intent.setAction(Intent.ACTION_INSERT);
 		startActivity(intent);  
 	}
 

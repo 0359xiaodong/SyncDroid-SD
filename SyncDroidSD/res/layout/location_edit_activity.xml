@@ -6,7 +6,7 @@
     android:orientation="vertical"
   	>
   
-<Button android:id="@+id/Button01" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="@string/save"></Button>
+<Button android:id="@+id/Button01" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="@string/save" android:onClick="onSaveClick"></Button>
 
 <EditText android:text="@+id/EditText01" android:id="@+id/EditText01" android:layout_height="wrap_content" android:layout_width="fill_parent"></EditText>
 

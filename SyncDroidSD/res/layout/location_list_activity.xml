@@ -6,7 +6,7 @@
     android:orientation="vertical"
   	>
   
-<Button android:id="@+id/Button01" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="@string/add_new" android:onClick="onAddNewClick"></Button>
+<Button android:id="@+id/Button01" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="@string/add_new" android:onClick="onButtonAddLocationClick"></Button>
 
 <ListView android:id="@+id/ListView01" android:layout_width="fill_parent" android:layout_height="wrap_content"
     android:layout_weight="1"

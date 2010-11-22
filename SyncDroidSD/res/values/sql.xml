@@ -22,11 +22,11 @@ CREATE TABLE locations (
 </string>
 
 <string name="create_table_locations_cells">
-CREATE TABLE location_cels (
+CREATE TABLE location_cells (
 	id INTEGER PRIMARY KEY,
 	location_id INTEGER,
 	cid INTEGER,
-	loc INTEGER
+	lac INTEGER
 )
 </string>
 

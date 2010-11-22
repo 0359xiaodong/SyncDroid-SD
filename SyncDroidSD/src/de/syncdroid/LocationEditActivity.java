@@ -1,9 +1,6 @@
 package de.syncdroid;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.app.Activity;
+import roboguice.inject.InjectView;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -16,40 +13,81 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.inject.Inject;
+
+import de.syncdroid.db.model.Location;
+import de.syncdroid.db.model.LocationCell;
+import de.syncdroid.db.service.LocationService;
 import de.syncdroid.service.SyncService;
 
 
-public class LocationActivity extends Activity {
+public class LocationEditActivity extends AbstractActivity {
 	static final String TAG = "LocationActivity";
 
+	
+	
 	/** Messenger for communicating with service. */
-	Messenger mService = null;
+	private Messenger mService = null;
 	/** Flag indicating whether we have called bind on the service. */
-	boolean mIsBound;
-	/** Some text view we are using to show state information. */
-	TextView mCallbackText;
+	private boolean mIsBound;
 
-	private ListView lv1;
-	List<String> itemList = new ArrayList<String>();
+	@InjectView(R.id.ListView01) private ListView lv1;
+	@InjectView(R.id.EditText01) 			 EditText txtName;
+	@Inject private LocationService locationService;
+	private Location location;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.location_activity);
+        setContentView(R.layout.location_edit_activity);
+        
+
+        Bundle bundle = getIntent().getExtras();
+        
+        if(getIntent().getAction().equals(Intent.ACTION_EDIT)) {
+        	Long id = bundle.getLong(EXTRA_ID);
+        	location = locationService.findById(id);
+        	
+        	if(location == null) {
+        		throw new RuntimeException(
+        				"profile with id '" + id + "' not found");
+        	}
+        } else if(getIntent().getAction().equals(Intent.ACTION_INSERT)) {
+        	location = new Location();
+        } else {
+        	throw new RuntimeException("no action given to Activity");
+        }
         
 		Intent myIntent = new Intent(this, SyncService.class);
 		myIntent.setAction(SyncService.INTENT_COLLECT_CELL_IDS);
 		bindService(myIntent, mConnection, 0);
 		
-        lv1 = (ListView)findViewById(R.id.ListView01);
-		AddItem("foo");
+		readFromDatabase();
+		
     }
+	
+	private void readFromDatabase() {
+        txtName.setText(location.getName());
+	}
+
+	private void writeToDatabase() {
+		location.setName(txtName.getText().toString());
+		
+		locationService.saveOrUpdate(location);
+	}
+	
+	public void onSaveClick(View view) {
+		writeToDatabase();
+		finish();
+	}
 	
     protected void onPause() {
         Log.i(TAG, "onPause()");
@@ -66,13 +104,14 @@ public class LocationActivity extends Activity {
             // disconnected (and then reconnected if it can be restarted)
             // so there is no need to do anything here.
         }
+        unbindService(mConnection);
 }
 
-	private void AddItem(String item) {
-		itemList.add(0, item);
-		ListAdapter adapter = new ArrayAdapter<String>(this, 
+	private void addItem(LocationCell item) {
+		location.getLocationCells().add(0, item);
+		ListAdapter adapter = new ArrayAdapter<LocationCell>(this, 
 				android.R.layout.simple_list_item_1, 
-				itemList.toArray(new String[]{}));
+				location.getLocationCells().toArray(new LocationCell[]{}));
 		lv1.setAdapter(adapter);
 		lv1.refreshDrawableState();
 	}
@@ -86,10 +125,18 @@ public class LocationActivity extends Activity {
 	        switch (msg.what) {
 	            case SyncService.FOUND_NEW_CELL:
 //	                mCallbackText.setText("Received from service: " + msg.arg1);
-	            	GsmCellLocation location = (GsmCellLocation)msg.obj;
+	            	GsmCellLocation cellLocation = (GsmCellLocation)msg.obj;
 	            	Log.d(TAG, "msg.arg1: " + msg.arg1);
-	            	Log.d(TAG, "msg.obj: " + location);
-	            	AddItem(location.toString());
+	            	Log.d(TAG, "msg.obj: " + cellLocation);
+	            	
+	            	LocationCell cell = new LocationCell();
+	            	cell.setCid(cellLocation.getCid());
+	            	cell.setLac(cellLocation.getLac());
+	            	
+	            	if(!location.getLocationCells().contains(cell)) {
+	            		addItem(cell);
+	            	}
+	            	
 	                break;
 	            default:
 	                super.handleMessage(msg);
@@ -128,7 +175,7 @@ public class LocationActivity extends Activity {
 //	            // Give it some value as an example.
 //	            msg = Message.obtain(null,
 //	                    SyncService.MSG_SET_VALUE, this.hashCode(), 0);
-//	            mService.send(msg);
+//	            mService.sen(msg);
 	        } catch (RemoteException e) {
 	            // In this case the service has crashed before we could even
 	            // do anything with it; we can count on soon being
@@ -137,7 +184,7 @@ public class LocationActivity extends Activity {
 	        }
 
 	        // As part of the sample, tell the user what happened.
-	        Toast.makeText(LocationActivity.this, R.string.remote_service_connected,
+	        Toast.makeText(LocationEditActivity.this, R.string.remote_service_connected,
 	                Toast.LENGTH_SHORT).show();
 	    }
 
@@ -145,10 +192,10 @@ public class LocationActivity extends Activity {
 	        // This is called when the connection with the service has been
 	        // unexpectedly disconnected -- that is, its process crashed.
 	        mService = null;
-	        mCallbackText.setText("Disconnected.");
+	        //mCallbackText.setText("Disconnected.");
 
 	        // As part of the sample, tell the user what happened.
-	        Toast.makeText(LocationActivity.this, R.string.remote_service_disconnected,
+	        Toast.makeText(LocationEditActivity.this, R.string.remote_service_disconnected,
 	                Toast.LENGTH_SHORT).show();
 	    }
 	};
@@ -157,10 +204,10 @@ public class LocationActivity extends Activity {
 	    // Establish a connection with the service.  We use an explicit
 	    // class name because there is no reason to be able to let other
 	    // applications replace our component.
-	    bindService(new Intent(LocationActivity.this, 
+	    bindService(new Intent(LocationEditActivity.this, 
 	            SyncService.class), mConnection, Context.BIND_AUTO_CREATE);
 	    mIsBound = true;
-	    mCallbackText.setText("Binding.");
+	   // mCallbackText.setText("Binding.");
 	}
 
 	void doUnbindService() {
@@ -182,7 +229,7 @@ public class LocationActivity extends Activity {
 	        // Detach our existing connection.
 	        unbindService(mConnection);
 	        mIsBound = false;
-	        mCallbackText.setText("Unbinding.");
+	        //mCallbackText.setText("Unbinding.");
 	    }
 	}
 }

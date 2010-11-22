@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="delete_location">Delete Location</string>
+    <string name="edit_location">Edit location</string>
     <string name="delete_profile">Delete Profile</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="add_new">Add New</string>

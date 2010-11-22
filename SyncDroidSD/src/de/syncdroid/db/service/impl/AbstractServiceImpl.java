@@ -42,15 +42,8 @@ public abstract class AbstractServiceImpl<T extends Model> implements Service<T>
 		return obj;
 	}
 
-	@Override
-	public List<T> list() {
+	protected List<T> _list(Cursor cursor) {
 		List<T> lst = new ArrayList<T>();
-		
-		SQLiteDatabase db = databaseHelper.getReadableDatabase();
-		Cursor cursor = db.query(getTableName(), null, 
-				null, null, 
-				null, null, null, null);
-
 		if (cursor != null && cursor.moveToFirst()) {
 			do {
 				T obj = read(cursor);
@@ -60,12 +53,24 @@ public abstract class AbstractServiceImpl<T extends Model> implements Service<T>
 			} while (cursor.moveToNext());
 		}
 
+		
 		if (cursor != null && !cursor.isClosed()) {
 			cursor.close();
 		}        
-		
-		db.close();
 
+		return lst;
+	}
+	
+	@Override
+	public List<T> list() {
+		SQLiteDatabase db = databaseHelper.getReadableDatabase();
+		Cursor cursor = db.query(getTableName(), null, 
+				null, null, 
+				null, null, null, null);
+
+		List<T> lst = _list(cursor);
+		db.close();
+		
 		return lst;
 	}
 
