@@ -1,11 +1,15 @@
 package de.syncdroid.db.service.impl;
 
+import com.google.inject.Inject;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import de.syncdroid.db.model.Profile;
+import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
 
 public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements ProfileService {
+	@Inject private LocationService locationService;
 	
 	protected String getTableName() {
 		return "profiles";
@@ -28,6 +32,13 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 		obj.setLocalPath(cursor.getString(cursor.getColumnIndex("localPath")));
 		obj.setRemotePath(cursor.getString(cursor.getColumnIndex("remotePath")));
 		//obj.setPort(cursor.getInt(cursor.getColumnIndex("port")));
+
+		
+		Long locationId = cursor.getLong(cursor.getColumnIndex("location_id"));
+		
+		if(locationId != 0) {
+			obj.setLocation(locationService.findById(locationId));
+		}
 		
 		return obj;
 	}
@@ -45,6 +56,13 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 		values.put("localPath", obj.getLocalPath());
 		values.put("remotePath", obj.getRemotePath());
 		//values.put("port", obj.getPort());
+		
+		if(obj.getLocation() != null) {
+			if(obj.getLocation().getId() == null) {
+				locationService.save(obj.getLocation());
+			}
+			values.put("location_id", obj.getLocation().getId());
+		}
 		
 		return values;
 	}

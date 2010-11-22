@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="any">Any</string>
+    <string name="only_when_at_location">Only when at Location</string>
     <string name="delete_location">Delete Location</string>
     <string name="edit_location">Edit location</string>
     <string name="delete_profile">Delete Profile</string>

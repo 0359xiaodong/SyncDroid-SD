@@ -15,6 +15,7 @@ public class Profile implements Model {
 	private String localPath;
 	private String remotePath;
 	
+	private Location location;	
 	
 	@Override
 	public String toString() {
@@ -80,5 +81,13 @@ public class Profile implements Model {
 	}
 	public void setRemotePath(String remotePath) {
 		this.remotePath = remotePath;
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 }

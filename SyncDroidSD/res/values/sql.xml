@@ -44,11 +44,9 @@ INSERT INTO profiles (name, onlyIfWifi, lastSync)
 VALUES (?, ?, ?)
 </string>
 
-<!-- 
-<string name="update004_001">
-ALTER TABLE transactions 
-ADD COLUMN memo STRING;
+<string name="update001">
+ALTER TABLE profiles 
+ADD COLUMN location_id INTEGER;
 </string>
- -->
  
 </resources>

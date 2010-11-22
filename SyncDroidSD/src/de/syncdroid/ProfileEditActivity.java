@@ -1,16 +1,25 @@
 package de.syncdroid;
 
+import java.util.List;
+
 import roboguice.activity.GuiceActivity;
 import roboguice.inject.InjectView;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.Spinner;
 
 import com.google.inject.Inject;
 
+import de.syncdroid.db.model.Location;
 import de.syncdroid.db.model.Profile;
+import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
 
 public class ProfileEditActivity extends AbstractActivity  {
@@ -25,8 +34,10 @@ public class ProfileEditActivity extends AbstractActivity  {
 	@InjectView(R.id.EditText04)             EditText txtFtpPassword;
 	@InjectView(R.id.EditText05)             EditText txtFtpPath;
 	@InjectView(R.id.EditText06)             EditText txtProfileName;
+	@InjectView(R.id.Spinner01)				 Spinner  spnLocationList;
 	
     @Inject                            		 ProfileService profileService; 
+    @Inject                            		 LocationService locationService; 
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,15 +71,51 @@ public class ProfileEditActivity extends AbstractActivity  {
         txtFtpUsername.setText(profile.getUsername());
         txtFtpPassword.setText(profile.getPassword());
         txtFtpPath.setText(profile.getRemotePath());
+        
+        List<Location> locations = locationService.list();
+        Location anyLocation = new Location();
+        anyLocation.setId(0L);
+        anyLocation.setName(getResources().getString(R.string.any));
+        
+        locations.add(0, anyLocation);
+
+        ArrayAdapter<?> adapter = new ArrayAdapter<Location>(this, 
+        		android.R.layout.simple_spinner_item, 
+        		locations.toArray(new Location[]{}));
+
+        spnLocationList.setAdapter(adapter);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        
+        
+        int index = 0;
+        
+        if(profile.getLocation() != null) {
+	        for(Location location : locations) {
+	        	if(location.getId().equals(profile.getLocation().getId())) {
+	                spnLocationList.setSelection(index);
+	                break;
+	        	}
+	        	index ++;
+	        }
+        }
+
 	}
 
 	private void writeToDatabase() {
+		if(txtProfileName.getText().equals("")) {
+			return;
+		}
 		profile.setName(txtProfileName.getText().toString());
 		profile.setLocalPath(txtLocalDirectory.getText().toString());
 		profile.setHostname(txtFtpHost.getText().toString());
 		profile.setUsername(txtFtpUsername.getText().toString());
 		profile.setPassword(txtFtpPassword.getText().toString());
 		profile.setRemotePath(txtFtpPath.getText().toString());
+		
+		Location location = (Location) spnLocationList.getSelectedItem();
+		if(location.getId() != 0) {
+			profile.setLocation(location);
+		}
 		
 		profileService.saveOrUpdate(profile);
 	}

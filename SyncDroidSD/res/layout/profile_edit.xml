@@ -2,10 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-
+    android:layout_height="wrap_content"
+    android:keepScreenOn="false">
 <Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/ButtonSyncIt" android:drawingCacheQuality="high" android:onClick="onButtonSyncItClick" android:text="Save"></Button>
+<ScrollView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:keepScreenOn="false">
+    <!-- Here you put the rest of your current view-->
+
 <TextView android:id="@+id/TextView07" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/profile_name"></TextView><EditText android:id="@+id/EditText06" android:layout_height="wrap_content" android:layout_width="fill_parent"></EditText><TextView android:id="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/local_directory"></TextView><EditText android:id="@+id/EditText01" android:layout_height="wrap_content" android:layout_width="fill_parent"></EditText>
 
 <TextView android:id="@+id/TextView02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ftp_host"></TextView>
@@ -16,11 +26,12 @@
 <EditText android:id="@+id/EditText04" android:layout_height="wrap_content" android:layout_width="fill_parent" android:inputType="textPassword"></EditText>
 <TextView android:id="@+id/TextView05" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ftp_path"></TextView>
 <EditText android:id="@+id/EditText05" android:layout_height="wrap_content" android:layout_width="fill_parent"></EditText>
-
 <TextView android:id="@+id/TextView06" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/profile_options"></TextView>
 <CheckBox android:id="@+id/CheckBox01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/only_if_wifi"></CheckBox>
+<TextView android:id="@+id/TextView08" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/only_when_at_location"></TextView>
+<Spinner android:id="@+id/Spinner01" android:layout_height="wrap_content" android:layout_width="fill_parent"></Spinner>
 
 
-
-
+</LinearLayout>
+</ScrollView>
 </LinearLayout>

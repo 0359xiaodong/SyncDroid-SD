@@ -79,6 +79,9 @@ public class LocationEditActivity extends AbstractActivity {
 	}
 
 	private void writeToDatabase() {
+		if(txtName.getText().equals("")) {
+			return;
+		}
 		location.setName(txtName.getText().toString());
 		
 		locationService.saveOrUpdate(location);

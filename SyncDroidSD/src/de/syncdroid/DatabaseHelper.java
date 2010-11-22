@@ -10,7 +10,7 @@ import de.syncdroid.R;
 public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String TAG = "DatabaseHelper";
     private static final String DATABASE_NAME = "syncdroid.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private Context mContext;
     
     public DatabaseHelper(Context context) {
@@ -38,6 +38,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			Log.i(TAG, "update to version 2");
 			db.execSQL(res.getString(R.string.create_table_locations));
 			db.execSQL(res.getString(R.string.create_table_locations_cells));
+		}
+		if (oldVersion < 3) {
+			Log.i(TAG, "update to version 3");
+			db.execSQL(res.getString(R.string.update001));
 		}
 		Log.i(TAG, "onUpgrade(), complete");
 	}
