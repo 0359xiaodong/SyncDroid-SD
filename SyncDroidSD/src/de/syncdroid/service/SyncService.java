@@ -88,6 +88,7 @@ public class SyncService extends GuiceService {
 		{
 			if( intent.getAction().equals(TIMER_TICK)  )
 			{
+<<<<<<< HEAD
 				Log.d(TAG, "TIMER_TICK");
 				if(currentlyRunning) {
 					Log.w(TAG, "WARNING: TIMER_TICKET while running syncIt");
@@ -96,14 +97,18 @@ public class SyncService extends GuiceService {
 					syncIt();
 					currentlyRunning = false;
 				}
+=======
+//				Log.d(TAG, "TIMER_TICK");
+//				syncIt();
+>>>>>>> b305b8b76aa83b603080ed934a189b580d1b8f85
 				
 				TelephonyManager tm = (TelephonyManager) getSystemService(Activity.TELEPHONY_SERVICE); 
 		        GsmCellLocation location = (GsmCellLocation) tm.getCellLocation();
 		        if (!collectedLocations.contains(location)) {
 		        	Log.i(TAG, "new cell location: " + location);
 		        	collectedLocations.add(location);
+			        sendMessageToClients(FOUND_NEW_CELL, location);
 		        }
-		        sendMessageToClients(FOUND_NEW_CELL, location);
 			}
 			else if(intent.getAction().equals(INTENT_START_TIMER) ||
 				intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED))
