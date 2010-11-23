@@ -2,7 +2,9 @@ package de.syncdroid.service;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -35,50 +37,28 @@ import de.syncdroid.SyncBroadcastReceiver;
 import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.service.ProfileService;
 
-public class SyncService extends GuiceService {
+public class SyncService extends MessageService {
 	private static final String TAG = "SyncService";
 	private static final int POLL_INTERVALL = 15000;
 	
 	public static final String TIMER_TICK = "de.syncdroid.TIMER_TICK";
 	public static final String INTENT_START_TIMER = "de.syncdroid.INTENT_START_TIMER";
-	public static final String INTENT_COLLECT_CELL_IDS = "de.syncdroid.COLLECT_CELL_IDS";
 	
 	@Inject private ProfileService profileService;
 	
-	private Queue<Job> jobs = new ConcurrentLinkedQueue<Job>();
-	//private Set<GsmCellLocation> collectedLocations = new HashSet<GsmCellLocation>();
+
+	private Map<Long, String> profileStatusById = new HashMap<Long, String>();
+    
 	
-	private GsmCellLocation currentCellLocation = null;
+	private Queue<Job> jobs = new ConcurrentLinkedQueue<Job>();
 	
 	private Boolean currentlyRunning = false;
 
     /** For showing and hiding our notification. */
     NotificationManager mNM;
-    /** Keeps track of all current registered clients. */
-    ArrayList<Messenger> mClients = new ArrayList<Messenger>();
-    /** Holds last value set by a client. */
-    int mValue = 0;
 
-    /**
-     * Command to the service to register a client, receiving callbacks
-     * from the service.  The Message's replyTo field must be a Messenger of
-     * the client where callbacks should be sent.
-     */
-    public static final int MSG_REGISTER_CLIENT = 1;
 
-    /**
-     * Command to the service to unregister a client, ot stop receiving callbacks
-     * from the service.  The Message's replyTo field must be a Messenger of
-     * the client as previously given with MSG_REGISTER_CLIENT.
-     */
-    public static final int MSG_UNREGISTER_CLIENT = 2;
-
-    /**
-     * Command to service to set a new value.  This can be sent to the
-     * service to supply a new value, and will be sent by the service to
-     * any registered clients with the new value.
-     */
-    public static final int FOUND_NEW_CELL = 3;
+    public static final int PROFILE_STATUS_UPDATED = 3;
 
     @Override
     public void onStart(Intent intent, int startId) {
@@ -96,17 +76,6 @@ public class SyncService extends GuiceService {
 					syncIt();
 					currentlyRunning = false;
 				}
-				
-				TelephonyManager tm = (TelephonyManager) getSystemService(Activity.TELEPHONY_SERVICE); 
-		        GsmCellLocation location = (GsmCellLocation) tm.getCellLocation();
-		        
-		        
-		        if (currentCellLocation == null || !currentCellLocation.equals(location)) {
-		        	Log.i(TAG, "new cell location: " + location);
-		        	currentCellLocation = location;
-			        sendMessageToClients(FOUND_NEW_CELL, location);
-		        }
-		        
 			}
 			else if(intent.getAction().equals(INTENT_START_TIMER) ||
 				intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED))
@@ -123,49 +92,48 @@ public class SyncService extends GuiceService {
 				PendingIntent pi=PendingIntent.getBroadcast(this, 0, i, 0);
 				mgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 
 						SystemClock.elapsedRealtime(), POLL_INTERVALL, pi);
-				
-
-//				Intent i2=new Intent(this, SyncBroadcastReceiver.class);
-//				i2.setAction("SYNC_IT");
-//				PendingIntent pi2=PendingIntent.getBroadcast(this, 0, i2, 0);
-//				mgr.cancel(pi2);
 
 			}
-			else if(intent.getAction().equals(INTENT_COLLECT_CELL_IDS))
-			{
 			} else {
 				Log.d(TAG, "unknown intent:");
 				Log.d(TAG, "Receive intent= " + intent );
 				Log.d(TAG, "action= " + intent.getAction() );
 			}
 		}
-    }
-
-    private void sendMessageToClients(int what, Object obj) {
-        mValue = 4711;
-        for (int i=mClients.size()-1; i>=0; i--) {
-            try {
-                mClients.get(i).send(Message.obtain(null,
-                		what, obj));
-//                mClients.get(i).send(Message.obtain(null,
-//                		MSG_SET_VALUE, mValue, 0));
-            } catch (RemoteException e) {
-                // The client is dead.  Remove it from the list;
-                // we are going through the list from back to front
-                // so this is safe to do inside the loop.
-            	Log.w(TAG, "removing client: " + i);
-                mClients.remove(i);
-            }
-        }
-
-    }
     
-	private void syncIt() {
+
+	
+	    
+	@Override
+	public void handleRegisterClient() {
+		//sendMessageToClients(FOUND_NEW_CELL, currentCellLocation);
+		
+	}
+	
+	@Override
+	public void handleUnregisterClient() {
+		
+	}
+    @Override
+    public boolean handleMessage(Message msg) {
+    	if(super.handleMessage(msg)) {
+    		return true;
+    	}
+    	
+    	Log.d(TAG, "msg.what: " + msg.what);
+        switch (msg.what) {
+            default:
+                return false;
+        }
+    }
+
+            
+    private void syncIt() {
 		Log.d(TAG, "syncIt()");
 
 		if(profileService != null) {
 			for(Profile profile : profileService.list()) {
-				Job job = new FtpCopyJob(this, profile, profileService);
+				Job job = new FtpCopyJob(this, profile, profileService, this);
 				job.execute();
 				jobs.add(job);
 			}
@@ -175,45 +143,7 @@ public class SyncService extends GuiceService {
 		
 	}
 
-    /**
-     * Handler of incoming messages from clients.
-     */
-    class IncomingHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-        	Log.d(TAG, "msg.what: " + msg.what);
-            switch (msg.what) {
-                case MSG_REGISTER_CLIENT:
-                    mClients.add(msg.replyTo);
-			        sendMessageToClients(FOUND_NEW_CELL, currentCellLocation);
-                    break;
-                case MSG_UNREGISTER_CLIENT:
-                    mClients.remove(msg.replyTo);
-                    break;
-                case FOUND_NEW_CELL:
-                    mValue = msg.arg1;
-                    for (int i=mClients.size()-1; i>=0; i--) {
-                        try {
-                            mClients.get(i).send(Message.obtain(null,
-                                    FOUND_NEW_CELL, mValue, 0));
-                        } catch (RemoteException e) {
-                            // The client is dead.  Remove it from the list;
-                            // we are going through the list from back to front
-                            // so this is safe to do inside the loop.
-                            mClients.remove(i);
-                        }
-                    }
-                    break;
-                default:
-                    super.handleMessage(msg);
-            }
-        }
-    }
 
-    /**
-     * Target we publish for clients to send messages to IncomingHandler.
-     */
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
 
     @Override
     public void onCreate() {
@@ -234,14 +164,7 @@ public class SyncService extends GuiceService {
         Toast.makeText(this, R.string.remote_service_stopped, Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * When binding to the service, we return an interface to our messenger
-     * for sending messages to the service.
-     */
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mMessenger.getBinder();
-    }
+
 
     /**
      * Show a notification while this service is running.

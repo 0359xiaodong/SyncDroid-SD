@@ -1,5 +1,6 @@
 package de.syncdroid;
 
+import de.syncdroid.service.LocationDiscoveryService;
 import de.syncdroid.service.SyncService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,13 +13,21 @@ public class SyncBroadcastReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent ) {
 		Log.d(TAG, "Receive intent= " + intent );
 		Log.d(TAG, "action= " + intent.getAction() );
-		Intent serviceIntent = new Intent(context, SyncService.class);
-		if( intent.getAction() != null ) {
-			serviceIntent.setAction(intent.getAction());
-		}		
-		if( intent.getExtras() != null ) {
-			serviceIntent.putExtras(intent.getExtras());
+		
+		Class<?>[] services = {
+				SyncService.class, 
+				LocationDiscoveryService.class
+		};
+		
+		for(Class<?> clazz : services) {
+			Intent serviceIntent = new Intent(context, clazz);
+			if( intent.getAction() != null ) {
+				serviceIntent.setAction(intent.getAction());
+			}		
+			if( intent.getExtras() != null ) {
+				serviceIntent.putExtras(intent.getExtras());
+			}
+			context.startService(serviceIntent);
 		}
-		context.startService(serviceIntent);
 	}
 }

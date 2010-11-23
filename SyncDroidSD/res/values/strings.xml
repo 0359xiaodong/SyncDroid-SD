@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="view_log">view log</string>
     <string name="any">Any</string>
     <string name="only_when_at_location">Only when at Location</string>
     <string name="delete_location">Delete Location</string>

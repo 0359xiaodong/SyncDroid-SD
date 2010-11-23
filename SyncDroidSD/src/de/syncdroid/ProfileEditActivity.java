@@ -43,7 +43,7 @@ public class ProfileEditActivity extends AbstractActivity  {
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile_edit);
+        setContentView(R.layout.location_edit_activity);
 
         Bundle bundle = getIntent().getExtras();
         

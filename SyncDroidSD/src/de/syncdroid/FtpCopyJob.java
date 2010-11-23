@@ -12,16 +12,13 @@ import java.util.List;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
-import com.google.inject.Inject;
-
-import de.syncdroid.db.model.Profile;
-import de.syncdroid.db.service.ProfileService;
-
-import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
+import de.syncdroid.db.model.Profile;
+import de.syncdroid.db.service.ProfileService;
+import de.syncdroid.service.MessageService;
+import de.syncdroid.service.SyncService;
 
 public class FtpCopyJob implements Job {
 	private static final String TAG = "FtpCopyJob";
@@ -29,9 +26,10 @@ public class FtpCopyJob implements Job {
 	private Context context;
 	private Profile profile;
 	private ProfileService profileService;
+	private MessageService messageService;
 	
 	public FtpCopyJob(Context context, Profile profile, 
-			ProfileService profileService) {
+			ProfileService profileService, MessageService messageService) {
 		this.context = context;
 
         if(profile.getRemotePath().startsWith("/")) {
@@ -39,6 +37,7 @@ public class FtpCopyJob implements Job {
         }
         
         this.profileService = profileService;
+        this.messageService = messageService;
         
 		this.profile = profile;
 	}
@@ -52,7 +51,6 @@ public class FtpCopyJob implements Job {
 	}
 	
 	private RemoteFile buildTree(File dir) {
-		Log.d(TAG, "entering " + dir.getAbsolutePath());
 		RemoteFile here = new RemoteFile();
 		here.isDirectory = true;
 		here.name = dir.getName();
@@ -82,7 +80,8 @@ public class FtpCopyJob implements Job {
 	}
 
 	private void uploadFiles(RemoteFile dir, FTPClient ftpClient, Long lastUpload) throws IOException {
-		Log.d(TAG, "uploading file: " + dir.name);
+		Log.d(TAG, "beginning sync of " + dir.name);
+		
 		if (!ftpClient.changeWorkingDirectory(dir.name)) {
 			if (!ftpClient.makeDirectory(dir.name)) {
 				Log.e(TAG, "could not create directory: " + dir.name);
@@ -94,7 +93,9 @@ public class FtpCopyJob implements Job {
 		}
 		
 		for (RemoteFile item : dir.children) {
-			Log.d(TAG, "looking at " + item.name);
+			updateStatus("uploading: " + item.name);		
+			Log.d(TAG, "uploading" + item.name);
+			
 			if (item.isDirectory) {
 				uploadFiles(item, ftpClient, lastUpload);
 			} else if (lastUpload == null || ( 
@@ -111,9 +112,17 @@ public class FtpCopyJob implements Job {
 		ftpClient.changeToParentDirectory();
 	}
 	
+	private void updateStatus(String mgs) {
+		messageService.sendMessageToClients(SyncService.PROFILE_STATUS_UPDATED, 
+				new ProfileHelper(profile.getId(), mgs));
+		
+	}
 	@Override
 	public void execute() {
 		Log.d(TAG, "lastSync: " + profile.getLastSync());
+		
+		updateStatus("checking for file status ...");
+		
 		try {
 			String path = profile.getLocalPath();
 			if(path == null) {
@@ -126,6 +135,7 @@ public class FtpCopyJob implements Job {
 			File file = new File(path);
 
 			if(file.exists() == false) {
+				updateStatus("file not found: " + path);
 				Log.e(TAG, "file not found: " + path);
 				Toast.makeText(context, "localPath not found for profile '" 
 						+ profile.getName() + "': " + path, 2000).show();
@@ -168,9 +178,7 @@ public class FtpCopyJob implements Job {
 			
 			Toast.makeText(context, e.toString(), 2000).show();
 			return;
-		}
-
-		
+		}		
 		
 		Log.d(TAG, "upload success");
 
