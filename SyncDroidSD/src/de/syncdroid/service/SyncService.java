@@ -37,7 +37,7 @@ import de.syncdroid.db.service.ProfileService;
 
 public class SyncService extends GuiceService {
 	private static final String TAG = "SyncService";
-	private static final int POLL_INTERVALL = 5000;
+	private static final int POLL_INTERVALL = 15000;
 	
 	public static final String TIMER_TICK = "de.syncdroid.TIMER_TICK";
 	public static final String INTENT_START_TIMER = "de.syncdroid.INTENT_START_TIMER";
@@ -93,7 +93,7 @@ public class SyncService extends GuiceService {
 					Log.w(TAG, "WARNING: TIMER_TICKET while running syncIt");
 				} else {
 					currentlyRunning = true;
-					//syncIt();
+					syncIt();
 					currentlyRunning = false;
 				}
 				
@@ -133,10 +133,6 @@ public class SyncService extends GuiceService {
 			}
 			else if(intent.getAction().equals(INTENT_COLLECT_CELL_IDS))
 			{
-			}
-			else if(intent.getAction().equals("de.syncdroid.INTENT_SYNC_IT"))
-			{
-
 			} else {
 				Log.d(TAG, "unknown intent:");
 				Log.d(TAG, "Receive intent= " + intent );
@@ -169,7 +165,7 @@ public class SyncService extends GuiceService {
 
 		if(profileService != null) {
 			for(Profile profile : profileService.list()) {
-				Job job = new FtpCopyJob(this, profile);
+				Job job = new FtpCopyJob(this, profile, profileService);
 				job.execute();
 				jobs.add(job);
 			}

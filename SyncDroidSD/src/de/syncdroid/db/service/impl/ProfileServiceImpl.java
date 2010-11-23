@@ -1,14 +1,18 @@
 package de.syncdroid.db.service.impl;
 
+import java.text.ParseException;
+
 import com.google.inject.Inject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
 
 public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements ProfileService {
+	private static final String TAG = "ProfileServiceImpl";
 	@Inject private LocationService locationService;
 	
 	protected String getTableName() {
@@ -24,7 +28,15 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 		
 		obj.setName(cursor.getString(cursor.getColumnIndex("name")));
 		obj.setId(cursor.getLong(cursor.getColumnIndex("id")));
-		//obj.setLastSync(cursor.get(cursor.getColumnIndex("lastSync")));
+		String dateString = 
+			cursor.getString(cursor.getColumnIndex("lastSync"));
+		try {
+			if(dateString != null && "".equals(dateString) == false) {
+				obj.setLastSync(dateFormat.parse(dateString));
+			}
+		} catch (ParseException e) {
+			Log.e(TAG, "parseException for: " + dateString);
+		}
 		obj.setOnlyIfWifi(cursor.getInt(cursor.getColumnIndex("onlyIfWifi")) == 1);
 		obj.setHostname(cursor.getString(cursor.getColumnIndex("hostname")));
 		obj.setUsername(cursor.getString(cursor.getColumnIndex("username")));
@@ -55,7 +67,9 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 		values.put("password", obj.getPassword());
 		values.put("localPath", obj.getLocalPath());
 		values.put("remotePath", obj.getRemotePath());
-		//values.put("port", obj.getPort());
+		
+		values.put("lastSync", obj.getLastSync() == null ? null : 			
+			dateFormat.format(obj.getLastSync()));
 		
 		if(obj.getLocation() != null) {
 			if(obj.getLocation().getId() == null) {

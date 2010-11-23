@@ -1,5 +1,6 @@
 package de.syncdroid.db.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,8 @@ public abstract class AbstractServiceImpl<T extends Model> implements Service<T>
 	protected abstract ContentValues write(T obj);
 	protected abstract String getTableName();
 	
+	protected SimpleDateFormat dateFormat = 
+		new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	@Override
 	public T findById(Long id) {
