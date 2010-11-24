@@ -48,5 +48,11 @@ VALUES (?, ?, ?)
 ALTER TABLE profiles 
 ADD COLUMN location_id INTEGER;
 </string>
+
+
+<string name="update002">
+ALTER TABLE profiles 
+ADD COLUMN profile_type VARCHAR(255);
+</string>
  
 </resources>

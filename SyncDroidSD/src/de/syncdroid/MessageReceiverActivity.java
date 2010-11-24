@@ -1,17 +1,12 @@
 package de.syncdroid;
 
 import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
-import de.syncdroid.service.HandlerAdapter;
-import de.syncdroid.service.MessageHandler;
 import de.syncdroid.service.SyncService;
 
 public abstract class MessageReceiverActivity extends AbstractActivity implements MessageHandler {
@@ -24,8 +19,6 @@ public abstract class MessageReceiverActivity extends AbstractActivity implement
 	
 	/** Messenger for communicating with service. */
 	protected Messenger mService = null;
-	/** Flag indicating whether we have called bind on the service. */
-	private boolean mIsBound;
 	/**
 	 * Class for interacting with the main interface of the service.
 	 */
@@ -75,20 +68,25 @@ public abstract class MessageReceiverActivity extends AbstractActivity implement
         super.onPause();
 
         try {
-            Message msg = Message.obtain(null,
-                    SyncService.MSG_UNREGISTER_CLIENT);
-            msg.replyTo = mMessenger;
-            mService.send(msg);
+        	if(mService != null) {
+	            Message msg = Message.obtain(null,
+	                    SyncService.MSG_UNREGISTER_CLIENT);
+	            msg.replyTo = mMessenger;
+	            mService.send(msg);
+        	}
         } catch (RemoteException e) {
             // In this case the service has crashed before we could even
             // do anything with it; we can count on soon being
             // disconnected (and then reconnected if it can be restarted)
             // so there is no need to do anything here.
         }
-        unbindService(mConnection);
+        
+        if(mConnection != null) {
+        	unbindService(mConnection);
+        }
 	}
 
-	/*
+/*	
 	void doBindService() {
 	    // Establish a connection with the service.  We use an explicit
 	    // class name because there is no reason to be able to let other
@@ -122,5 +120,6 @@ public abstract class MessageReceiverActivity extends AbstractActivity implement
 	    }
 	}
 	*/
+	
 
 }

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="username">Username</string>
+    <string name="hostname">Hostname</string>
+    <string name="profile_type">Profile Type</string>
     <string name="view_log">view log</string>
     <string name="any">Any</string>
     <string name="only_when_at_location">Only when at Location</string>

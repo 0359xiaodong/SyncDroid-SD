@@ -6,16 +6,16 @@
     <application android:icon="@drawable/icon" 
     			 android:label="@string/app_name"
     			 android:name="de.syncdroid.SyncApplication">
-        <activity android:name=".ProfileListActivity"
+        <activity android:name="de.syncdroid.activity.ProfileListActivity"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProfileEditActivity" android:label="@string/app_name"></activity>
-        <activity android:name=".LocationEditActivity" android:label="@string/app_name"></activity>
-        <activity android:name=".LocationListActivity" android:label="@string/app_name"></activity>
+        <activity android:name="de.syncdroid.activity.ProfileEditActivity" android:label="@string/app_name"></activity>
+        <activity android:name="de.syncdroid.activity.LocationEditActivity" android:label="@string/app_name"></activity>
+        <activity android:name="de.syncdroid.activity.LocationListActivity" android:label="@string/app_name"></activity>
         
     	<service android:name="de.syncdroid.service.SyncService"/>
     	<service android:name="de.syncdroid.service.LocationDiscoveryService"/>
@@ -37,7 +37,7 @@
                 <action android:name="de.syncdroid.service.LocationDiscoveryService" />
             </intent-filter>
             <intent-filter>
-                <action android:name="de.syncdroid.service.SyncBroadcastReceiver" />
+                <action android:name="de.syncdroid.SyncBroadcastReceiver" />
             </intent-filter>
         </receiver>
     </application>

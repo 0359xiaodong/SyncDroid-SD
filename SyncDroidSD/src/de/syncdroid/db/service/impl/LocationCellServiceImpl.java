@@ -1,6 +1,5 @@
 package de.syncdroid.db.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -9,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import de.syncdroid.db.model.Location;
 import de.syncdroid.db.model.LocationCell;
 import de.syncdroid.db.service.LocationCellService;
-import de.syncdroid.db.service.LocationService;
 
 public class LocationCellServiceImpl extends AbstractServiceImpl<LocationCell> implements LocationCellService {
 

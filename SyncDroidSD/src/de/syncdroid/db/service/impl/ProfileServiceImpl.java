@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
 import de.syncdroid.db.model.Profile;
+import de.syncdroid.db.model.ProfileType;
 import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
 
@@ -43,6 +44,9 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 		obj.setPassword(cursor.getString(cursor.getColumnIndex("password")));
 		obj.setLocalPath(cursor.getString(cursor.getColumnIndex("localPath")));
 		obj.setRemotePath(cursor.getString(cursor.getColumnIndex("remotePath")));
+		
+		obj.setProfileType(ProfileType.getByCode(
+				cursor.getString(cursor.getColumnIndex("profile_type"))));
 		//obj.setPort(cursor.getInt(cursor.getColumnIndex("port")));
 
 		
@@ -67,6 +71,7 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 		values.put("password", obj.getPassword());
 		values.put("localPath", obj.getLocalPath());
 		values.put("remotePath", obj.getRemotePath());
+		values.put("profile_type", obj.getProfileType().toString());
 		
 		values.put("lastSync", obj.getLastSync() == null ? null : 			
 			dateFormat.format(obj.getLastSync()));

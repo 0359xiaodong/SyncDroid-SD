@@ -1,4 +1,4 @@
-package de.syncdroid.service;
+package de.syncdroid;
 
 import java.util.ArrayList;
 
@@ -53,8 +53,6 @@ public abstract class MessageService extends GuiceService implements MessageHand
                 mClients.remove(i);
             }
         }
-        
-        this.
     }
     
     @Override

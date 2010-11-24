@@ -15,6 +15,7 @@ public class Profile implements Model {
 	private String localPath;
 	private String remotePath;
 	
+	private ProfileType profileType;
 	private Location location;	
 	
 	@Override
@@ -89,5 +90,13 @@ public class Profile implements Model {
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+
+	public ProfileType getProfileType() {
+		return profileType;
+	}
+
+	public void setProfileType(ProfileType profileType) {
+		this.profileType = profileType;
 	}
 }

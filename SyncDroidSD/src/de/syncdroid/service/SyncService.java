@@ -1,41 +1,28 @@
 package de.syncdroid.service;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
 import android.os.SystemClock;
-import android.telephony.TelephonyManager;
-import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.inject.Inject;
 
-import de.syncdroid.FtpCopyJob;
 import de.syncdroid.Job;
-import de.syncdroid.ProfileListActivity;
+import de.syncdroid.MessageService;
 import de.syncdroid.R;
 import de.syncdroid.SyncBroadcastReceiver;
+import de.syncdroid.activity.ProfileListActivity;
 import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.service.ProfileService;
+import de.syncdroid.work.ftp.OneWayCopyJob;
 
 public class SyncService extends MessageService {
 	private static final String TAG = "SyncService";
@@ -45,18 +32,10 @@ public class SyncService extends MessageService {
 	public static final String INTENT_START_TIMER = "de.syncdroid.INTENT_START_TIMER";
 	
 	@Inject private ProfileService profileService;
-	
-
-	private Map<Long, String> profileStatusById = new HashMap<Long, String>();
-    
-	
-	private Queue<Job> jobs = new ConcurrentLinkedQueue<Job>();
-	
 	private Boolean currentlyRunning = false;
 
     /** For showing and hiding our notification. */
-    NotificationManager mNM;
-
+    private NotificationManager mNM;
 
     public static final int PROFILE_STATUS_UPDATED = 3;
 
@@ -133,9 +112,9 @@ public class SyncService extends MessageService {
 
 		if(profileService != null) {
 			for(Profile profile : profileService.list()) {
-				Job job = new FtpCopyJob(this, profile, profileService, this);
+				Job job = 
+					new OneWayCopyJob(this, profile, profileService, this);
 				job.execute();
-				jobs.add(job);
 			}
 		} else {
 			Log.e(TAG, "profileService is NULL");
