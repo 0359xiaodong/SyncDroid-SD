@@ -17,7 +17,7 @@ public class LocationCellServiceImpl extends AbstractServiceImpl<LocationCell> i
 		obj.setId(cursor.getLong(cursor.getColumnIndex("id")));
 		obj.setCid(cursor.getInt(cursor.getColumnIndex("cid")));
 		obj.setLac(cursor.getInt(cursor.getColumnIndex("lac")));
-		obj.setLocationId(cursor.getLong(cursor.getColumnIndex("name")));
+		obj.setLocationId(cursor.getLong(cursor.getColumnIndex("location_id")));
 		
 		return obj;
 	}
@@ -42,6 +42,20 @@ public class LocationCellServiceImpl extends AbstractServiceImpl<LocationCell> i
 		SQLiteDatabase db = databaseHelper.getReadableDatabase();
 		Cursor cursor = db.query(getTableName(), null, 
 				"location_id = ?", new String[] {location.getId().toString()}, 
+				null, null, null, null);
+		
+		List<LocationCell> lst = _list(cursor);
+		db.close();
+		
+		return lst;
+	}
+	
+	@Override
+	public List<LocationCell> findByCidAndLac(Integer cid, Integer lac) {
+		SQLiteDatabase db = databaseHelper.getReadableDatabase();
+		Cursor cursor = db.query(getTableName(), null, 
+				"cid = ? AND lac = ?", new String[] {cid.toString(), 
+						lac.toString()}, 
 				null, null, null, null);
 		
 		List<LocationCell> lst = _list(cursor);

@@ -3,7 +3,10 @@ package de.syncdroid.activity;
 import java.util.List;
 
 import roboguice.inject.InjectView;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -115,7 +118,8 @@ public class LocationListActivity extends AbstractActivity {
 	protected void onResume() {
         Log.d(TAG, "onResume()");
         super.onResume();
-        
+
+
 		updateLocationList();
 	}
 	
@@ -131,6 +135,7 @@ public class LocationListActivity extends AbstractActivity {
     protected void onPause() {
         Log.d(TAG, "onPause()");
         super.onPause();
+
 
         dumpLocations();
     }
@@ -170,5 +175,7 @@ public class LocationListActivity extends AbstractActivity {
 		}
 		return true;
 	}
+	
+
 
 }

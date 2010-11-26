@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -35,6 +36,7 @@ public class ProfileEditActivity extends AbstractActivity  {
 	@InjectView(R.id.EditText06)             EditText txtProfileName;
 	@InjectView(R.id.Spinner01)				 Spinner  spnLocationList;
 	@InjectView(R.id.Spinner02)				 Spinner  spnProfileTypeList;
+	@InjectView(R.id.CheckBox01)		     CheckBox  chkOnlyIfWifi;
 	
     @Inject                            		 ProfileService profileService; 
     @Inject                            		 LocationService locationService; 
@@ -72,6 +74,8 @@ public class ProfileEditActivity extends AbstractActivity  {
         txtFtpUsername.setText(profile.getUsername());
         txtFtpPassword.setText(profile.getPassword());
         txtFtpPath.setText(profile.getRemotePath());
+        chkOnlyIfWifi.setChecked(profile.getOnlyIfWifi());
+        
 
         // setup spnLocationList
         List<Location> locations = locationService.list();
@@ -133,6 +137,7 @@ public class ProfileEditActivity extends AbstractActivity  {
 		profile.setUsername(txtFtpUsername.getText().toString());
 		profile.setPassword(txtFtpPassword.getText().toString());
 		profile.setRemotePath(txtFtpPath.getText().toString());
+		profile.setOnlyIfWifi(chkOnlyIfWifi.isChecked());
 		
 		Location location = (Location) spnLocationList.getSelectedItem();
 		if(location.getId() != 0) {

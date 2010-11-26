@@ -22,6 +22,27 @@ public class Location implements Model {
 		return id;
 	}
 
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj)
+			return true;
+		if((obj == null) || (obj.getClass() != this.getClass()))
+			return false;
+		
+		// object must be Test at this point
+		Location test = (Location) obj;
+		return 
+			(id != null && id.equals(test.id)) 
+			;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 31 * hash + (null == id ? 0 : id.hashCode());
+		return hash;
+	}	
 	@Override
 	public void setId(Long id) {
 		this.id = id;

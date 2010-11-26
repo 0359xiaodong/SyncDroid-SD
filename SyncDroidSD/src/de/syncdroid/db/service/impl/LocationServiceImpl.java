@@ -1,11 +1,13 @@
 package de.syncdroid.db.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.inject.Inject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import de.syncdroid.db.model.Location;
 import de.syncdroid.db.model.LocationCell;
 import de.syncdroid.db.service.LocationCellService;
@@ -59,6 +61,25 @@ public class LocationServiceImpl extends AbstractServiceImpl<Location> implement
 	@Override
 	protected String getTableName() {
 		return "locations";
+	}
+	
+	@Override
+	public List<Location> locate(Integer cid, Integer lac) {
+		List<LocationCell> locationCells =
+			locationCellService.findByCidAndLac(cid, lac);
+		
+		List<Location> locations = new ArrayList<Location>();
+		
+		if(locationCells != null) {
+			for(LocationCell cell : locationCells) {
+				Location location = this.findById(cell.getLocationId());
+				if(location != null) {
+					locations.add(location);
+				}
+			}
+		}
+		
+		return locations;
 	}
 
 }

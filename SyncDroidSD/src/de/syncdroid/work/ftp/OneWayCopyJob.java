@@ -11,11 +11,11 @@ import com.zehon.ftps.FTPs;
 import com.zehon.sftp.SFTP;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
+import de.syncdroid.AbstractActivity;
 import de.syncdroid.Job;
-import de.syncdroid.MessageService;
-import de.syncdroid.ProfileHelper;
 import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.service.ProfileService;
 import de.syncdroid.service.SyncService;
@@ -23,30 +23,27 @@ import de.syncdroid.service.SyncService;
 public class OneWayCopyJob implements Job {
 
 	private static final String TAG = "FtpCopyJob";
+
+	public static final String ACTION_PROFILE_UPDATE 
+		= "de.syncdroid.ACTION_PROFILE_UPDATE";
 	
 	private Context context;
 	private Profile profile;
 	private ProfileService profileService;
-	private MessageService messageService;
 	
 	public OneWayCopyJob(Context context, Profile profile, 
-			ProfileService profileService, MessageService messageService) {
+			ProfileService profileService) {
 		this.context = context;
 
         if(profile.getRemotePath().startsWith("/")) {
         	profile.setRemotePath(profile.getRemotePath().substring(1));
         }
         
+        Log.i(TAG, "OneWayCopyJob()");
+        
         this.profileService = profileService;
-        this.messageService = messageService;
         
 		this.profile = profile;
-	}
-
-	private void updateStatus(String mgs) {
-		messageService.sendMessageToClients(SyncService.PROFILE_STATUS_UPDATED, 
-				new ProfileHelper(profile.getId(), mgs));
-		
 	}
 	
 	private Long findNewestFile(File dir) {
@@ -65,7 +62,21 @@ public class OneWayCopyJob implements Job {
 		
 		return newest;
 	}	
-	
+
+	private void updateStatus(String msg) {
+		Log.e(TAG, "message: " + msg);
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(ACTION_PROFILE_UPDATE);
+        broadcastIntent.putExtra(AbstractActivity.EXTRA_ID, profile.getId());
+        broadcastIntent.putExtra(AbstractActivity.EXTRA_MESSAGE, msg);
+        this.context.sendBroadcast(broadcastIntent);
+
+/*		
+		messageService.sendMessageToClients(SyncService.PROFILE_STATUS_UPDATED, 
+				new ProfileHelper(profile.getId(), mgs));
+				*/
+		
+	}
 	
 	@Override
 	public void execute() {
@@ -100,23 +111,40 @@ public class OneWayCopyJob implements Job {
 			return;
 		}		
 		
+		BatchTransferProgressDefault progressCallback = 
+			new BatchTransferProgressDefault() {
+				public void transferComplete(String fileName) {
+					updateStatus("transfer of '" + fileName + "' completed.");
+				};
+				
+				public void transferError(String fileName, Throwable errorException) {
+					updateStatus("transfer of '" + fileName + "' failed: "
+						+ errorException);
+					
+				};
+				
+				public void transferStart(String fileName) {
+					updateStatus("transfer of '" + fileName + "' started.");
+				};
+			};
+		
 		try {
 			int status = 0;
 			
 			switch (profile.getProfileType()) {
 			case FTP: 
 				status = FTP.sendFolder(sendingFolder, destFolder, 
-						new BatchTransferProgressDefault(), 
+						progressCallback, 
 						host, username, password);
 				break;
 			case FTPs: 
 				status = FTPs.sendFolder(sendingFolder, destFolder, 
-						new BatchTransferProgressDefault(), 
+						progressCallback, 
 						host, username, password);
 				break;
 			case SFTP: 
 				status = SFTP.sendFolder(sendingFolder, destFolder, 
-						new BatchTransferProgressDefault(), 
+						progressCallback, 
 						host, username, password);
 			}
 			

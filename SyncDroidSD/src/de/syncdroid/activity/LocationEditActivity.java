@@ -1,7 +1,12 @@
 package de.syncdroid.activity;
 
+import java.util.List;
+
 import roboguice.inject.InjectView;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Message;
 import android.telephony.gsm.GsmCellLocation;
@@ -14,21 +19,25 @@ import android.widget.ListView;
 
 import com.google.inject.Inject;
 
-import de.syncdroid.MessageReceiverActivity;
+import de.syncdroid.AbstractActivity;
 import de.syncdroid.R;
 import de.syncdroid.db.model.Location;
 import de.syncdroid.db.model.LocationCell;
+import de.syncdroid.db.service.LocationCellService;
 import de.syncdroid.db.service.LocationService;
 import de.syncdroid.service.LocationDiscoveryService;
 
 
-public class LocationEditActivity extends MessageReceiverActivity {
+public class LocationEditActivity extends AbstractActivity {
 	static final String TAG = "LocationActivity";
 
+	static public final String EXTRA_CELL_LAC = "lac";
+	static public final String EXTRA_CELL_CID = "cid";
 
 	@InjectView(R.id.ListView01) private ListView lv1;
 	@InjectView(R.id.EditText01) 			 EditText txtName;
 	@Inject private LocationService locationService;
+	@Inject private LocationCellService locationCellService;
 	private Location location;
 	
 	@Override
@@ -56,11 +65,21 @@ public class LocationEditActivity extends MessageReceiverActivity {
         
 		Intent myIntent = new Intent(this, LocationDiscoveryService.class);
 		myIntent.setAction(LocationDiscoveryService.INTENT_COLLECT_CELL_IDS);
-		bindService(myIntent, mConnection, 0);
+		startService(myIntent);
 		
 		readFromDatabase();
 		
     }
+	 
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+        
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(LocationDiscoveryService.ACTION_CELL_CHANGED);
+		this.registerReceiver(this.receiver, filter);
+	}
 	
 	private void readFromDatabase() {
         txtName.setText(location.getName());
@@ -71,6 +90,28 @@ public class LocationEditActivity extends MessageReceiverActivity {
 			return;
 		}
 		location.setName(txtName.getText().toString());
+		
+		if(location.getLocationCells() != null) {
+			List<LocationCell> locationCells = 
+				locationCellService.findAllbyLocation(location);
+
+			// delete missing cells
+			for(LocationCell cell : locationCells) {
+				if(location.getLocationCells().contains(cell) == false) {
+					locationCellService.delete(cell);
+				}
+			}
+			
+			// add new cells
+			for(LocationCell cell : location.getLocationCells()) {
+				if(locationCells.contains(cell) == false) {
+					cell.setLocationId(location.getId());
+					locationCellService.saveOrUpdate(cell);
+				}
+			}
+		}
+		
+		
 		
 		locationService.saveOrUpdate(location);
 	}
@@ -89,27 +130,24 @@ public class LocationEditActivity extends MessageReceiverActivity {
 		lv1.setAdapter(adapter);
 		lv1.refreshDrawableState();
 	}
+	
 
-    public boolean handleMessage(Message msg) {
-        switch (msg.what) {
-            case LocationDiscoveryService.FOUND_NEW_CELL:
-//	                mCallbackText.setText("Received from service: " + msg.arg1);
-            	GsmCellLocation cellLocation = (GsmCellLocation)msg.obj;
-            	Log.d(TAG, "msg.arg1: " + msg.arg1);
-            	Log.d(TAG, "msg.obj: " + cellLocation);
-            	
-            	LocationCell cell = new LocationCell();
-            	cell.setCid(cellLocation.getCid());
-            	cell.setLac(cellLocation.getLac());
-            	
-            	if(!location.getLocationCells().contains(cell)) {
-            		addItem(cell);
-            	}
-            	
-            	return true;
-            default:
-            	return false;
-        }
-    }
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+	    	Integer cid = intent.getExtras().getInt(EXTRA_CELL_CID);
+	    	Integer lac = intent.getExtras().getInt(EXTRA_CELL_LAC);
+        	
+        	LocationCell cell = new LocationCell();
+        	cell.setCid(cid);
+        	cell.setLac(lac);
+        	
+        	Log.d(TAG, "received cell location: " + cell);
+        	
+        	if(!location.getLocationCells().contains(cell)) {
+        		addItem(cell);
+        	}
+	    }   
+    };
 
 }

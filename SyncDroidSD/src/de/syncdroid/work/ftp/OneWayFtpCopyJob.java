@@ -12,26 +12,38 @@ import java.util.List;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.wifi.WifiManager;
+import android.telephony.TelephonyManager;
+import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.widget.Toast;
+import de.syncdroid.AbstractActivity;
 import de.syncdroid.Job;
-import de.syncdroid.MessageService;
-import de.syncdroid.ProfileHelper;
+import de.syncdroid.db.model.Location;
+import de.syncdroid.db.model.LocationCell;
 import de.syncdroid.db.model.Profile;
+import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
 import de.syncdroid.service.SyncService;
 
-public class OneWayFtpCopyJob implements Job {
+public class OneWayFtpCopyJob implements Runnable {
 	private static final String TAG = "FtpCopyJob";
+	
+	public static final String ACTION_PROFILE_UPDATE 
+		= "de.syncdroid.ACTION_PROFILE_UPDATE";
+
+	
 	
 	private Context context;
 	private Profile profile;
 	private ProfileService profileService;
-	private MessageService messageService;
+	private LocationService locationService;
 	
 	public OneWayFtpCopyJob(Context context, Profile profile, 
-			ProfileService profileService, MessageService messageService) {
+			ProfileService profileService, LocationService locatonService) {
 		this.context = context;
 
         if(profile.getRemotePath().startsWith("/")) {
@@ -39,7 +51,7 @@ public class OneWayFtpCopyJob implements Job {
         }
         
         this.profileService = profileService;
-        this.messageService = messageService;
+        this.locationService = locatonService;
         
 		this.profile = profile;
 	}
@@ -114,14 +126,70 @@ public class OneWayFtpCopyJob implements Job {
 		ftpClient.changeToParentDirectory();
 	}
 	
-	private void updateStatus(String mgs) {
+	private void updateStatus(String msg) {
+		Log.d(TAG, "message: " + msg);
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(ACTION_PROFILE_UPDATE);
+        broadcastIntent.putExtra(AbstractActivity.EXTRA_ID, profile.getId());
+        broadcastIntent.putExtra(AbstractActivity.EXTRA_MESSAGE, msg);
+        this.context.sendBroadcast(broadcastIntent);
+
+/*		
 		messageService.sendMessageToClients(SyncService.PROFILE_STATUS_UPDATED, 
 				new ProfileHelper(profile.getId(), mgs));
+				*/
 		
 	}
+	
+
 	@Override
-	public void execute() {
+	public void run() {
 		Log.d(TAG, "lastSync: " + profile.getLastSync());
+		
+		if(profile.getOnlyIfWifi()) {
+			Log.d(TAG, "checking for wifi");
+			WifiManager wifiManager = (WifiManager) 
+				context.getSystemService(Activity.WIFI_SERVICE);
+			
+			if(wifiManager.getWifiState() != WifiManager.WIFI_STATE_ENABLED) {
+
+				Log.d(TAG, "wifi is off");
+				updateStatus("wifi is off");
+				return;
+			} else {
+				Log.d(TAG, "wifi is on");
+			}			
+		}
+		
+		if(profile.getLocation() != null) {
+			Log.d(TAG, "checking location '" 
+					+ profile.getLocation().getName() + "'");
+			updateStatus("checking location '" 
+					+ profile.getLocation().getName() + "'");
+			
+			TelephonyManager tm = (TelephonyManager) 
+					context.getSystemService(Activity.TELEPHONY_SERVICE); 
+	        GsmCellLocation location = (GsmCellLocation) tm.getCellLocation();
+	        
+	        List<Location> locations = 
+	        	locationService.locate(location.getCid(), location.getLac());
+			Log.d(TAG, "at cell '" + new LocationCell(location.getCid(), 
+					location.getLac()) + "'");
+	        
+	        if(locations.contains(profile.getLocation()) == false) {
+	        	updateStatus("not at location '" + profile.getLocation().getName() + "'");
+				Log.d(TAG, "not at location '" + profile.getLocation().getName() + "'");
+				
+				for(LocationCell cell : profile.getLocation().getLocationCells()) {
+					Log.d(TAG, " - " + cell);
+				}
+				
+				return;
+	        } else {
+				Log.d(TAG, "at location '" 
+						+ profile.getLocation().getName() + "'");
+	        }
+		}
 		
 		updateStatus("checking for file status ...");
 		
@@ -149,6 +217,7 @@ public class OneWayFtpCopyJob implements Job {
 			if (profile.getLastSync() != null 
 					&& rootRemote.newest <= profile.getLastSync().getTime()) {
 				Log.d(TAG, "nothing to do");
+				updateStatus("nothing to do");
 				return;
 			}
 
@@ -160,6 +229,8 @@ public class OneWayFtpCopyJob implements Job {
 				Toast.makeText(context, "login failed for profile '" 
 						+ profile.getName() + "'", 2000).show();
 				
+
+				updateStatus("login failed");
 				// disconnect from ftp server
 				ftpClient.logout();
 				ftpClient.disconnect();
@@ -177,11 +248,12 @@ public class OneWayFtpCopyJob implements Job {
 			ftpClient.disconnect();
 		} catch(Exception e) {
 			Log.e(TAG, "whoa, exception: ", e);
+			updateStatus("error");
 			
 			Toast.makeText(context, e.toString(), 2000).show();
 			return;
 		}		
-		
+
 		Log.d(TAG, "upload success");
 
 		profile.setLastSync(new Date());

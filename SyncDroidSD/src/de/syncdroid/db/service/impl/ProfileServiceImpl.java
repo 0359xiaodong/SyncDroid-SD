@@ -48,11 +48,11 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 		obj.setProfileType(ProfileType.getByCode(
 				cursor.getString(cursor.getColumnIndex("profile_type"))));
 		//obj.setPort(cursor.getInt(cursor.getColumnIndex("port")));
+		
 
-		
 		Long locationId = cursor.getLong(cursor.getColumnIndex("location_id"));
-		
-		if(locationId != 0) {
+ 		
+		if(locationId != null && locationId != 0) {
 			obj.setLocation(locationService.findById(locationId));
 		}
 		

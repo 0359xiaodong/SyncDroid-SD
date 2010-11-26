@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import roboguice.inject.InjectView;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -25,14 +27,14 @@ import android.widget.TextView;
 
 import com.google.inject.Inject;
 
-import de.syncdroid.MessageReceiverActivity;
-import de.syncdroid.ProfileHelper;
+import de.syncdroid.AbstractActivity;
 import de.syncdroid.R;
 import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.service.ProfileService;
 import de.syncdroid.service.SyncService;
+import de.syncdroid.work.ftp.OneWayFtpCopyJob;
 
-public class ProfileListActivity extends MessageReceiverActivity {
+public class ProfileListActivity extends AbstractActivity {
 	static final String TAG = "ProfileListActivity";
 	
 	@Inject private ProfileService profileService;
@@ -51,10 +53,11 @@ public class ProfileListActivity extends MessageReceiverActivity {
         
 		Intent myIntent = new Intent(this, SyncService.class);
 		myIntent.setAction(SyncService.INTENT_START_TIMER);
-		bindService(myIntent, mConnection, 0);
+		startService(myIntent);
 		
 		dumpProfiles();
-		updateProfileList();
+		updateProfileList();        
+
 		
 		lstProfiles.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			 public void onItemClick(AdapterView<?> a, View v, int position, long id) {
@@ -126,7 +129,12 @@ public class ProfileListActivity extends MessageReceiverActivity {
 	protected void onResume() {
         Log.d(TAG, "onResume()");
         super.onResume();
+
         
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(OneWayFtpCopyJob.ACTION_PROFILE_UPDATE);
+		this.registerReceiver(this.receiver, filter);
+
 		updateProfileList();
 	}
 	
@@ -143,6 +151,7 @@ public class ProfileListActivity extends MessageReceiverActivity {
     protected void onPause() {
         Log.d(TAG, "onPause()");
         super.onPause();
+        this.unregisterReceiver(this.receiver);
 
         dumpProfiles();
     }
@@ -244,21 +253,19 @@ public class ProfileListActivity extends MessageReceiverActivity {
 		}
 	}
 
+    
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Long id = intent.getExtras().getLong(EXTRA_ID);
+        	String msg = intent.getExtras().getString(EXTRA_MESSAGE);
+			Log.d(TAG, "onReceive() : " + msg);
+        	profileStatusById.put(id, msg);
+        	//lstProfiles.invalidate();
+        	lstProfiles.invalidateViews();
+		}
+ 
+     };
 
-    public boolean handleMessage(Message msg) {
-    	Log.i(TAG, "handleMessage() " + msg.what);
-        switch (msg.what) {
-            case SyncService.PROFILE_STATUS_UPDATED:
-//	                mCallbackText.setText("Received from service: " + msg.arg1);
-            	
-            	ProfileHelper profileHelper = (ProfileHelper) msg.obj;
-            	profileStatusById.put(profileHelper.id, profileHelper.message);
-            	//lstProfiles.invalidate();
-            	lstProfiles.invalidateViews();
-            	return true;
-            default:
-            	return false;
-        }
-    }
 
 }

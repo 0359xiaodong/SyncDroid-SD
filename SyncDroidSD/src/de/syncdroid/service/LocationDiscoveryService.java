@@ -5,23 +5,27 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
-import de.syncdroid.MessageService;
+import de.syncdroid.GuiceService;
 import de.syncdroid.SyncBroadcastReceiver;
+import de.syncdroid.activity.LocationEditActivity;
 
-public class LocationDiscoveryService extends MessageService {
+public class LocationDiscoveryService extends Service {
 	private static final String TAG = "SyncService";
 	private static final int POLL_INTERVALL = 1000;
 	
 	public static final String TIMER_TICK = "de.syncdroid.TIMER_TICK";
 	public static final String INTENT_START_TIMER = "de.syncdroid.INTENT_START_TIMER";
 	public static final String INTENT_COLLECT_CELL_IDS = "de.syncdroid.COLLECT_CELL_IDS";
+	public static final String ACTION_CELL_CHANGED = "de.syncdroid.ACTION_CELL_CHANGED";
 	
 	private GsmCellLocation currentCellLocation = null;
 
@@ -31,6 +35,22 @@ public class LocationDiscoveryService extends MessageService {
      * any registered clients with the new value.
      */
     public static final int FOUND_NEW_CELL = 3;
+    
+    private void sendCellLocation() {
+
+		TelephonyManager tm = (TelephonyManager) 
+				getSystemService(Activity.TELEPHONY_SERVICE); 
+        GsmCellLocation location = (GsmCellLocation) tm.getCellLocation();
+
+    	Intent cellChangedIntent = new Intent();
+    	cellChangedIntent.setAction(ACTION_CELL_CHANGED);
+    	cellChangedIntent.putExtra(
+    			LocationEditActivity.EXTRA_CELL_CID, location.getCid());
+    	cellChangedIntent.putExtra(
+    			LocationEditActivity.EXTRA_CELL_LAC, location.getLac());
+    	
+    	sendBroadcast(cellChangedIntent);
+    }
 
     @Override
     public void onStart(Intent intent, int startId) {
@@ -42,15 +62,16 @@ public class LocationDiscoveryService extends MessageService {
 			{
 				Log.d(TAG, "TIMER_TICK");
 				
+
 				TelephonyManager tm = (TelephonyManager) 
 						getSystemService(Activity.TELEPHONY_SERVICE); 
 		        GsmCellLocation location = (GsmCellLocation) tm.getCellLocation();
 		        
-		        
 		        if (currentCellLocation == null || !currentCellLocation.equals(location)) {
 		        	Log.i(TAG, "new cell location: " + location);
 		        	currentCellLocation = location;
-			        sendMessageToClients(FOUND_NEW_CELL, location);
+		        	
+		        	sendCellLocation();
 		        }
 		        
 			}
@@ -73,6 +94,7 @@ public class LocationDiscoveryService extends MessageService {
 			}
 			else if(intent.getAction().equals(INTENT_COLLECT_CELL_IDS))
 			{
+				sendCellLocation();
 			} else {
 				Log.d(TAG, "unknown intent:");
 				Log.d(TAG, "Receive intent= " + intent );
@@ -82,32 +104,8 @@ public class LocationDiscoveryService extends MessageService {
     }
 
 	@Override
-	public void handleRegisterClient() {
-		sendMessageToClients(FOUND_NEW_CELL, currentCellLocation);
-		
+	public IBinder onBind(Intent intent) {
+		return null;
 	}
-	
-	@Override
-	public void handleUnregisterClient() {
-		
-	}
-    @Override
-    public boolean handleMessage(Message msg) {
-    	if(super.handleMessage(msg)) {
-    		return true;
-    	}
-    	
-    	Log.d(TAG, "msg.what: " + msg.what);
-        switch (msg.what) {
-            case FOUND_NEW_CELL:
-                Integer cellId = msg.arg1;
-                sendMessageToClients(FOUND_NEW_CELL, cellId);
-                break;
-            default:
-                return false;
-        }
-        
-        return true;
-    }
 
 }

@@ -7,7 +7,13 @@ public class LocationCell implements Model {
 	private Integer lac;
 	private Integer cid;
 	
-
+	public LocationCell() {
+	}
+	public LocationCell(Integer cid, Integer lac) {
+		this.lac = lac;
+		this.cid = cid;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if(this == obj)
