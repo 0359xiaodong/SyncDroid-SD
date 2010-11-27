@@ -36,7 +36,7 @@ import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
 
-public class OneWayFtpCopyJob implements Runnable {
+public class OneWayFtpCopyJob extends AbstractCopyJob implements Runnable {
 	private static final String TAG = "FtpCopyJob";
 	
 	public static final String ACTION_PROFILE_UPDATE 
@@ -48,9 +48,7 @@ public class OneWayFtpCopyJob implements Runnable {
 	private Profile profile;
 	private ProfileService profileService;
 	private LocationService locationService;
-	
-	private Integer transferedFiles;
-	private Integer filesToTransfer;
+
 	private Notification notification;
 	private NotificationManager notificationManager;
 	
@@ -66,46 +64,6 @@ public class OneWayFtpCopyJob implements Runnable {
         this.locationService = locatonService;
         
 		this.profile = profile;
-	}
-
-	private class RemoteFile {
-		public Boolean isDirectory;
-		public String name;
-		public String fullpath;
-		public File source;
-		public Long newest;
-		public List<RemoteFile> children = new ArrayList<OneWayFtpCopyJob.RemoteFile>();
-	}
-	
-	private RemoteFile buildTree(File dir, String fullpath) {
-        Log.i(TAG, "buildTree with fullpath: '" + fullpath + "'");
-		RemoteFile here = new RemoteFile();
-		here.isDirectory = true;
-		here.name = dir.getName();
-		here.fullpath = fullpath;
-		here.source = dir;
-		here.newest = 0L;
-
-		for (String item : dir.list()) {
-			File fileItem = new File(dir, item);
-			if (fileItem.isDirectory()) {
-				RemoteFile tmp = buildTree(fileItem, fullpath + "/" + item);
-				here.children.add(tmp);
-				Log.d(TAG, " - adding: " + tmp.name);
-				here.newest = Math.max(here.newest, tmp.newest);
-			} else {
-				RemoteFile aFile = new RemoteFile();
-				aFile.isDirectory = false;
-				aFile.name = item;
-				aFile.source = fileItem;
-				aFile.fullpath = fullpath;
-				here.children.add(aFile);
-				filesToTransfer ++;
-				here.newest = Math.max(here.newest, fileItem.lastModified());
-			}
-		}
-		
-		return here;
 	}
 
 	private void uploadFiles(RemoteFile dir, FileTransferClient fileTransferClient, Long lastUpload) throws IOException, FileTransferException {
@@ -292,24 +250,6 @@ public class OneWayFtpCopyJob implements Runnable {
 				break;
 			}
 
-			
-			/*fileTransferClient.connect(InetAddress.getByName(profile.getHostname()));
-			if(!fileTransferClient.login(profile.getUsername(), profile.getPassword())) {
-				Log.e(TAG, "login failed for profile '" + profile.getName() + "'");
-				Toast.makeText(context, "login failed for profile '" 
-						+ profile.getName() + "'", 2000).show();
-				
-
-				updateStatus("login failed");
-				// disconnect from ftp server
-				fileTransferClient.logout();
-				fileTransferClient.disconnect();
-				return ;
-			}*/
-			
-			
-			//fileTransferClient.setFileType(FTP.BINARY_FILE_TYPE);
-
 			uploadFiles(rootRemote, fileTransferClient, profile.getLastSync() != null ? 
 					profile.getLastSync().getTime() : null);
 
@@ -325,10 +265,7 @@ public class OneWayFtpCopyJob implements Runnable {
 					"upload success", msg, contentIntent);
 			
 			notificationManager.notify(R.string.remote_service_started, notification);
-			
-			
-			
-			notification.tickerText = msg;
+            notification.tickerText = msg;
 
 			profile.setLastSync(new Date());
 			profileService.update(profile);

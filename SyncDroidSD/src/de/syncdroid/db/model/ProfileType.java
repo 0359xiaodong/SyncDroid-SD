@@ -1,7 +1,7 @@
 package de.syncdroid.db.model;
 
 public enum ProfileType {
-	FTP("FTP"), SFTP("SFTP"), FTPs("FTPs");
+	FTP("FTP"), SFTP("SFTP"), FTPs("FTPs"), SMB("SMB");
 	
 	ProfileType(String code) {
 		this.code = code;
@@ -19,8 +19,10 @@ public enum ProfileType {
 			return FTP;
 		if("SFTP".equals(code)) 
 			return SFTP;
-		if("FTPs".equals(code)) 
+		if("FTPs".equals(code))
 			return FTPs;
+		if("SMB".equals(code))
+			return SMB;
 
 		return null;
 	}
