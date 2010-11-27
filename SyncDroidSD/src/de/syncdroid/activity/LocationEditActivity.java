@@ -8,8 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Message;
-import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -75,6 +73,18 @@ public class LocationEditActivity extends AbstractActivity {
 	protected void onResume() {
 		super.onResume();
 
+		Long locationId = location.getId();
+		
+		if(locationId != null) {
+	    	location = locationService.findById(locationId);
+	    	if(location == null) {
+	    		Log.e(TAG, "failed to find location with id " + locationId);
+	    		finish();
+	    		return;
+	    	}
+	    	
+	    	readFromDatabase();
+		}
         
         IntentFilter filter = new IntentFilter();
         filter.addAction(LocationDiscoveryService.ACTION_CELL_CHANGED);

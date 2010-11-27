@@ -3,22 +3,24 @@ package de.syncdroid.work.ftp;
 import java.io.File;
 import java.util.Date;
 
-import com.zehon.BatchTransferProgressDefault;
-import com.zehon.FileTransferStatus;
-import com.zehon.exception.FileTransferException;
-import com.zehon.ftp.FTP;
-import com.zehon.ftps.FTPs;
-import com.zehon.sftp.SFTP;
 
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.zehon.BatchTransferProgressDefault;
+import com.zehon.FileTransferStatus;
+import com.zehon.exception.FileTransferException;
+import com.zehon.ftp.FTP;
+import com.zehon.ftp.FTPClient;
+import com.zehon.ftps.FTPs;
+import com.zehon.sftp.SFTP;
+
 import de.syncdroid.AbstractActivity;
 import de.syncdroid.Job;
 import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.service.ProfileService;
-import de.syncdroid.service.SyncService;
 
 public class OneWayCopyJob implements Job {
 
@@ -130,6 +132,10 @@ public class OneWayCopyJob implements Job {
 		
 		try {
 			int status = 0;
+			FTPClient ftpClient = new FTPClient("ftp.myhost.com","ftp", "pass");
+			
+
+
 			
 			switch (profile.getProfileType()) {
 			case FTP: 

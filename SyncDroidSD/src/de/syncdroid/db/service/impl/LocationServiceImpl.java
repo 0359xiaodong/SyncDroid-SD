@@ -3,11 +3,11 @@ package de.syncdroid.db.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.inject.Inject;
-
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+
+import com.google.inject.Inject;
+
 import de.syncdroid.db.model.Location;
 import de.syncdroid.db.model.LocationCell;
 import de.syncdroid.db.service.LocationCellService;

@@ -3,30 +3,21 @@ package de.syncdroid.service;
 import java.util.Calendar;
 
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.inject.Inject;
 
 import de.syncdroid.GuiceService;
-import de.syncdroid.Job;
-import de.syncdroid.R;
 import de.syncdroid.SyncBroadcastReceiver;
-import de.syncdroid.activity.ProfileListActivity;
 import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
-import de.syncdroid.work.ftp.OneWayCopyJob;
 import de.syncdroid.work.ftp.OneWayFtpCopyJob;
 
 public class SyncService extends GuiceService {
@@ -41,9 +32,6 @@ public class SyncService extends GuiceService {
 	
 	@Inject
 	private LocationService locationService;
-
-	/** For showing and hiding our notification. */
-	private NotificationManager mNM;
 
 	private Thread thread = null;
 
@@ -109,55 +97,7 @@ public class SyncService extends GuiceService {
 	}
 
 	@Override
-	public void onCreate() {
-		mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-		// Display a notification about us starting.
-		showNotification();
-	}
-
-	@Override
-	public void onDestroy() {
-		Log.d(TAG, "onDestroy()");
-
-		// Cancel the persistent notification.
-		mNM.cancel(R.string.remote_service_started);
-
-		// Tell the user we stopped.
-		Toast.makeText(this, R.string.remote_service_stopped,
-				Toast.LENGTH_SHORT).show();
-	}
-
-	/**
-	 * Show a notification while this service is running.
-	 */
-	private void showNotification() {
-		// In this sample, we'll use the same text for the ticker and the
-		// expanded notification
-		CharSequence text = getText(R.string.remote_service_started);
-
-		// Set the icon, scrolling text and timestamp
-		Notification notification = new Notification(R.drawable.icon, text,
-				System.currentTimeMillis());
-
-		// The PendingIntent to launch our activity if the user selects this
-		// notification
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-				new Intent(this, ProfileListActivity.class), 0);
-
-		// Set the info for the views that show in the notification panel.
-		notification.setLatestEventInfo(this,
-				getText(R.string.remote_service_label), text, contentIntent);
-
-		// Send the notification.
-		// We use a string id because it is a unique number. We use it later to
-		// cancel.
-		mNM.notify(R.string.remote_service_started, notification);
-	}
-
-	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

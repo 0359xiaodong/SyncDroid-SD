@@ -9,12 +9,10 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
-import de.syncdroid.GuiceService;
 import de.syncdroid.SyncBroadcastReceiver;
 import de.syncdroid.activity.LocationEditActivity;
 

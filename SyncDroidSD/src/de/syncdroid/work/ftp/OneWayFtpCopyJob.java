@@ -9,10 +9,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
+import com.zehon.FileTransferClient;
+import com.zehon.exception.FileTransferException;
+import com.zehon.ftp.FTPClient;
+import com.zehon.ftps.FTPsClient;
+import com.zehon.sftp.SFTPClient;
+
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
@@ -21,13 +28,13 @@ import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.widget.Toast;
 import de.syncdroid.AbstractActivity;
-import de.syncdroid.Job;
+import de.syncdroid.R;
+import de.syncdroid.activity.ProfileListActivity;
 import de.syncdroid.db.model.Location;
 import de.syncdroid.db.model.LocationCell;
 import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
-import de.syncdroid.service.SyncService;
 
 public class OneWayFtpCopyJob implements Runnable {
 	private static final String TAG = "FtpCopyJob";
@@ -41,6 +48,11 @@ public class OneWayFtpCopyJob implements Runnable {
 	private Profile profile;
 	private ProfileService profileService;
 	private LocationService locationService;
+	
+	private Integer transferedFiles;
+	private Integer filesToTransfer;
+	private Notification notification;
+	private NotificationManager notificationManager;
 	
 	public OneWayFtpCopyJob(Context context, Profile profile, 
 			ProfileService profileService, LocationService locatonService) {
@@ -59,15 +71,17 @@ public class OneWayFtpCopyJob implements Runnable {
 	private class RemoteFile {
 		public Boolean isDirectory;
 		public String name;
+		public String fullpath;
 		public File source;
 		public Long newest;
 		public List<RemoteFile> children = new ArrayList<OneWayFtpCopyJob.RemoteFile>();
 	}
 	
-	private RemoteFile buildTree(File dir) {
+	private RemoteFile buildTree(File dir, String fullpath) {
 		RemoteFile here = new RemoteFile();
 		here.isDirectory = true;
 		here.name = dir.getName();
+		here.fullpath = fullpath;
 		here.source = dir;
 		here.newest = 0L;
 
@@ -75,7 +89,7 @@ public class OneWayFtpCopyJob implements Runnable {
 			Log.d(TAG, " - contains: " + item);
 			File fileItem = new File(dir, item);
 			if (fileItem.isDirectory()) {
-				RemoteFile tmp = buildTree(fileItem);
+				RemoteFile tmp = buildTree(fileItem, fullpath + "/" + dir.getName());
 				here.children.add(tmp);
 				Log.d(TAG, " - adding: " + tmp.name);
 				here.newest = Math.max(here.newest, tmp.newest);
@@ -84,7 +98,9 @@ public class OneWayFtpCopyJob implements Runnable {
 				aFile.isDirectory = false;
 				aFile.name = item;
 				aFile.source = fileItem;
+				aFile.fullpath = fullpath;
 				here.children.add(aFile);
+				filesToTransfer ++;
 				Log.d(TAG, " - adding: " +aFile.name);
 				here.newest = Math.max(here.newest, fileItem.lastModified());
 			}
@@ -93,37 +109,53 @@ public class OneWayFtpCopyJob implements Runnable {
 		return here;
 	}
 
-	private void uploadFiles(RemoteFile dir, FTPClient ftpClient, Long lastUpload) throws IOException {
+	private void uploadFiles(RemoteFile dir, FileTransferClient fileTransferClient, Long lastUpload) throws IOException, FileTransferException {
 		Log.d(TAG, "beginning sync of " + dir.name);
 		
-		if (!ftpClient.changeWorkingDirectory(dir.name)) {
-			if (!ftpClient.makeDirectory(dir.name)) {
+		/*
+		if (!fileTransferClient.changeWorkingDirectory(dir.name)) {
+			if (!fileTransferClient.makeDirectory(dir.name)) {
 				Log.e(TAG, "could not create directory: " + dir.name);
 				return;
-			} else if (!ftpClient.changeWorkingDirectory(dir.name)) {
+			} else if (!fileTransferClient.changeWorkingDirectory(dir.name)) {
 				Log.e(TAG, "could not change directory" + dir.name);
 				return;
 			}
 		}
+		*/
 		
 		for (RemoteFile item : dir.children) {
 			updateStatus("uploading: " + item.name);		
 			Log.d(TAG, "uploading" + item.name);
 			
 			if (item.isDirectory) {
-				uploadFiles(item, ftpClient, lastUpload);
+				uploadFiles(item, fileTransferClient, lastUpload);
 			} else if (lastUpload == null || ( 
 					item.source != null && item.source.lastModified() 
 					> lastUpload)) {
 				BufferedInputStream inputStream=null;
 				inputStream = new BufferedInputStream(
 						new FileInputStream(item.source));
-				ftpClient.enterLocalPassiveMode();
-				ftpClient.storeFile(item.name, inputStream);
+				//fileTransferClient.enterLocalPassiveMode();
+				fileTransferClient.sendFile(item.source, item.fullpath);
+				transferedFiles  ++;
+
+				String msg = "transfering ... uploaded " + transferedFiles + "/" 
+					+ filesToTransfer;
+				Log.d(TAG, msg);
+				PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
+						new Intent(context, ProfileListActivity.class), 0);
+
+				// Set the info for the views that show in the notification panel.
+				notification.setLatestEventInfo(context,
+						"upload success", msg, contentIntent);
+				notificationManager.notify(R.string.remote_service_started, notification);
 				inputStream.close();
+			} else {
+				filesToTransfer --;
 			}
 		}
-		ftpClient.changeToParentDirectory();
+		//fileTransferClient.changeToParentDirectory();
 	}
 	
 	private void updateStatus(String msg) {
@@ -211,8 +243,10 @@ public class OneWayFtpCopyJob implements Runnable {
 						+ profile.getName() + "': " + path, 2000).show();
 				return ;
 			}
-			
-			RemoteFile rootRemote = buildTree(file);
+
+			transferedFiles = 0;
+			filesToTransfer = 0;
+			RemoteFile rootRemote = buildTree(file, profile.getRemotePath());
 			
 			if (profile.getLastSync() != null 
 					&& rootRemote.newest <= profile.getLastSync().getTime()) {
@@ -221,10 +255,46 @@ public class OneWayFtpCopyJob implements Runnable {
 				return;
 			}
 
-			// connect to ftp server
-			FTPClient ftpClient = new FTPClient();
-			ftpClient.connect(InetAddress.getByName(profile.getHostname()));
-			if(!ftpClient.login(profile.getUsername(), profile.getPassword())) {
+			notification = new Notification(R.drawable.icon, 
+					"upload started for '" + profile.getName() + "'",
+					System.currentTimeMillis());
+			
+
+			// The PendingIntent to launch our activity if the user selects this
+			// notification
+			PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
+					new Intent(context, ProfileListActivity.class), 0);
+			notificationManager = 
+				(NotificationManager) context.getSystemService(Activity.NOTIFICATION_SERVICE);
+
+			// Set the info for the views that show in the notification panel.
+			notification.setLatestEventInfo(context,
+					"upload success", "starting uploading ...", contentIntent);
+			
+			notificationManager.notify(R.string.remote_service_started, notification);
+			
+			Long transferBegin = System.currentTimeMillis();
+
+			FileTransferClient fileTransferClient = null;
+			
+			switch (profile.getProfileType()) {
+			case FTP: 
+				fileTransferClient = new FTPClient(profile.getHostname(), 
+						profile.getUsername(), profile.getPassword());
+				break;
+			case FTPs: 
+				fileTransferClient = new FTPsClient(profile.getHostname(), 
+						profile.getUsername(), profile.getPassword(), true);
+				break;
+			case SFTP: 
+				fileTransferClient = new SFTPClient(profile.getHostname(), 
+						profile.getUsername(), profile.getPassword());
+				break;
+			}
+
+			
+			/*fileTransferClient.connect(InetAddress.getByName(profile.getHostname()));
+			if(!fileTransferClient.login(profile.getUsername(), profile.getPassword())) {
 				Log.e(TAG, "login failed for profile '" + profile.getName() + "'");
 				Toast.makeText(context, "login failed for profile '" 
 						+ profile.getName() + "'", 2000).show();
@@ -232,20 +302,41 @@ public class OneWayFtpCopyJob implements Runnable {
 
 				updateStatus("login failed");
 				// disconnect from ftp server
-				ftpClient.logout();
-				ftpClient.disconnect();
+				fileTransferClient.logout();
+				fileTransferClient.disconnect();
 				return ;
-			}
+			}*/
 			
 			
-			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+			//fileTransferClient.setFileType(FTP.BINARY_FILE_TYPE);
 
-			uploadFiles(rootRemote, ftpClient, profile.getLastSync() != null ? 
+			uploadFiles(rootRemote, fileTransferClient, profile.getLastSync() != null ? 
 					profile.getLastSync().getTime() : null);
+
+			Long transferFinish = System.currentTimeMillis();
+			
+			Long transferTimeSeconds = (transferFinish - transferBegin) / 1000;
+			
+			String msg = "finished. uploaded " + transferedFiles + "/" 
+				+ filesToTransfer + " in " + transferTimeSeconds + " seconds";
+			Log.d(TAG, msg);
+
+			notification.setLatestEventInfo(context,
+					"upload success", msg, contentIntent);
+			
+			notificationManager.notify(R.string.remote_service_started, notification);
+			
+			
+			
+			notification.tickerText = msg;
+
+			profile.setLastSync(new Date());
+			profileService.update(profile);
 			
 			// disconnect from ftp server
-			ftpClient.logout();
-			ftpClient.disconnect();
+			/*ftpClient.logout();
+			ftpClient.disconnect();*/
+			FileTransferClient.closeCache();
 		} catch(Exception e) {
 			Log.e(TAG, "whoa, exception: ", e);
 			updateStatus("error");
@@ -254,10 +345,6 @@ public class OneWayFtpCopyJob implements Runnable {
 			return;
 		}		
 
-		Log.d(TAG, "upload success");
-
-		profile.setLastSync(new Date());
-		profileService.update(profile);
 	}
 
 }

@@ -128,7 +128,7 @@ public class ProfileEditActivity extends AbstractActivity  {
 	}
 
 	private void writeToDatabase() {
-		if(txtProfileName.getText().equals("")) {
+		if(txtProfileName.getText().toString().equals("")) {
 			return;
 		}
 		profile.setName(txtProfileName.getText().toString());
