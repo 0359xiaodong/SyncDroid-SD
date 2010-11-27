@@ -78,7 +78,6 @@ public class SyncService extends GuiceService {
 
 		if(profileService != null) {
 			Runnable job = new Runnable() {
-				@Override
 				public void run() {
 					Looper.prepare();
 					for(Profile profile : profileService.list()) {

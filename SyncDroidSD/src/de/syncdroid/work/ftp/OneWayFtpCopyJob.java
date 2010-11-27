@@ -172,9 +172,7 @@ public class OneWayFtpCopyJob implements Runnable {
 				*/
 		
 	}
-	
 
-	@Override
 	public void run() {
 		Log.d(TAG, "lastSync: " + profile.getLastSync());
 		

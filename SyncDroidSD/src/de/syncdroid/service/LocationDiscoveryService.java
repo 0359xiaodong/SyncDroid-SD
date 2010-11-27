@@ -40,6 +40,11 @@ public class LocationDiscoveryService extends Service {
 				getSystemService(Activity.TELEPHONY_SERVICE); 
         GsmCellLocation location = (GsmCellLocation) tm.getCellLocation();
 
+        if(location == null) {
+            Log.e(TAG, "could not send cell location: telephoneManager returned null");
+            return ;
+        }
+
     	Intent cellChangedIntent = new Intent();
     	cellChangedIntent.setAction(ACTION_CELL_CHANGED);
     	cellChangedIntent.putExtra(

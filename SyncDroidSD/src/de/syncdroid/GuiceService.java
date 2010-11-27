@@ -21,7 +21,6 @@ public abstract class GuiceService extends Service implements InjectorProvider {
         super.onStart(intent, startId);
     }
 
-    @Override
     public Injector getInjector() {
         return ((GuiceApplication) getApplication()).getInjector();
     }

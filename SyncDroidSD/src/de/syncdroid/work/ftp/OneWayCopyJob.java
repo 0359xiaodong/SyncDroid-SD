@@ -79,8 +79,7 @@ public class OneWayCopyJob implements Job {
 				*/
 		
 	}
-	
-	@Override
+
 	public void execute() {
 		String host = profile.getHostname();
 		String username = profile.getUsername();

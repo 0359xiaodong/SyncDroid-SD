@@ -62,8 +62,7 @@ public class LocationServiceImpl extends AbstractServiceImpl<Location> implement
 	protected String getTableName() {
 		return "locations";
 	}
-	
-	@Override
+
 	public List<Location> locate(Integer cid, Integer lac) {
 		List<LocationCell> locationCells =
 			locationCellService.findByCidAndLac(cid, lac);

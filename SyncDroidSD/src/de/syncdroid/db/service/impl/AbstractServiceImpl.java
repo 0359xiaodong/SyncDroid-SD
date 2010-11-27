@@ -23,7 +23,6 @@ public abstract class AbstractServiceImpl<T extends Model> implements Service<T>
 	protected SimpleDateFormat dateFormat = 
 		new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	@Override
 	public T findById(Long id) {
 		SQLiteDatabase db = databaseHelper.getReadableDatabase();
 		Cursor cursor = db.query(getTableName(), null, 
@@ -63,8 +62,7 @@ public abstract class AbstractServiceImpl<T extends Model> implements Service<T>
 
 		return lst;
 	}
-	
-	@Override
+
 	public List<T> list() {
 		SQLiteDatabase db = databaseHelper.getReadableDatabase();
 		Cursor cursor = db.query(getTableName(), null, 
@@ -77,14 +75,12 @@ public abstract class AbstractServiceImpl<T extends Model> implements Service<T>
 		return lst;
 	}
 
-	@Override
 	public void save(T obj) {
 		SQLiteDatabase db = databaseHelper.getWritableDatabase();
 		obj.setId(db.insert(getTableName(), null, write(obj)));			
 		db.close();
 	}
 
-	@Override
 	public void update(T obj) {
 		SQLiteDatabase db = databaseHelper.getWritableDatabase();
 		db.update(getTableName(), write(obj), "id = ?", 
@@ -100,7 +96,6 @@ public abstract class AbstractServiceImpl<T extends Model> implements Service<T>
 		}
 	}
 
-	@Override
 	public void delete(T obj) {
 		SQLiteDatabase db = databaseHelper.getWritableDatabase();
 		db.delete(getTableName(), "id = ?", new String[] {obj.getId().toString()});
