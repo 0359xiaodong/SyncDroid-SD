@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SyncDroid.iml" filepath="$PROJECT_DIR$/SyncDroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SyncDroidSD.iml" filepath="$PROJECT_DIR$/SyncDroidSD.iml" />
     </modules>
   </component>
 </project>

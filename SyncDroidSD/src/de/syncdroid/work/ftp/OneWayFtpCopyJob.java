@@ -78,6 +78,7 @@ public class OneWayFtpCopyJob implements Runnable {
 	}
 	
 	private RemoteFile buildTree(File dir, String fullpath) {
+        Log.i(TAG, "buildTree with fullpath: '" + fullpath + "'");
 		RemoteFile here = new RemoteFile();
 		here.isDirectory = true;
 		here.name = dir.getName();
@@ -86,10 +87,9 @@ public class OneWayFtpCopyJob implements Runnable {
 		here.newest = 0L;
 
 		for (String item : dir.list()) {
-			Log.d(TAG, " - contains: " + item);
 			File fileItem = new File(dir, item);
 			if (fileItem.isDirectory()) {
-				RemoteFile tmp = buildTree(fileItem, fullpath + "/" + dir.getName());
+				RemoteFile tmp = buildTree(fileItem, fullpath + "/" + item);
 				here.children.add(tmp);
 				Log.d(TAG, " - adding: " + tmp.name);
 				here.newest = Math.max(here.newest, tmp.newest);
@@ -101,7 +101,6 @@ public class OneWayFtpCopyJob implements Runnable {
 				aFile.fullpath = fullpath;
 				here.children.add(aFile);
 				filesToTransfer ++;
-				Log.d(TAG, " - adding: " +aFile.name);
 				here.newest = Math.max(here.newest, fileItem.lastModified());
 			}
 		}
@@ -137,6 +136,9 @@ public class OneWayFtpCopyJob implements Runnable {
 				inputStream = new BufferedInputStream(
 						new FileInputStream(item.source));
 				//fileTransferClient.enterLocalPassiveMode();
+
+                Log.i(TAG, "transfering '" + item.source + "' to '" + item.fullpath + "'");
+
 				fileTransferClient.sendFile(item.source, item.fullpath);
 				transferedFiles  ++;
 
@@ -334,7 +336,7 @@ public class OneWayFtpCopyJob implements Runnable {
 			// disconnect from ftp server
 			/*ftpClient.logout();
 			ftpClient.disconnect();*/
-			FileTransferClient.closeCache();
+			//FileTransferClient.closeCache();
 		} catch(Exception e) {
 			Log.e(TAG, "whoa, exception: ", e);
 			updateStatus("error");

@@ -140,9 +140,11 @@ public class ProfileEditActivity extends AbstractActivity  {
 		profile.setOnlyIfWifi(chkOnlyIfWifi.isChecked());
 		
 		Location location = (Location) spnLocationList.getSelectedItem();
-		if(location.getId() != 0) {
+		if(location.getId() != null && location.getId() != 0) {
 			profile.setLocation(location);
-		}
+		} else {
+            profile.setLocation(null);
+        }
 		
 		ProfileType profileType = (ProfileType) 
 			spnProfileTypeList.getSelectedItem();

@@ -81,7 +81,9 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 				locationService.save(obj.getLocation());
 			}
 			values.put("location_id", obj.getLocation().getId());
-		}
+		} else {
+            values.put("location_id", (Long) null);
+        }
 		
 		return values;
 	}
