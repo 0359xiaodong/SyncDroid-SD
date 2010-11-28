@@ -42,7 +42,7 @@ public class SmbFileTransferClient extends AbstractFileTransferClient {
         return true;
     }
 
-    public boolean transfer(InputStream inputStream, String targetPath) {
+    public boolean transfer(File file, String targetPath) {
         if(targetPath.startsWith("/") == false) {
             Log.e(TAG, "invalid smb target path: '" + targetPath + "'");
             return false;
@@ -98,6 +98,8 @@ public class SmbFileTransferClient extends AbstractFileTransferClient {
             SmbFile smbFile = new SmbFile(pathPrefix + targetPath, passwordAuthentication);
 
             SmbFileOutputStream outStream = new SmbFileOutputStream(smbFile);
+
+            InputStream inputStream = new FileInputStream(file);
 
             while (true) {
                synchronized (buffer) {

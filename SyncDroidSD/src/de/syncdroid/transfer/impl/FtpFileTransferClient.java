@@ -7,6 +7,7 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -45,7 +46,7 @@ public class FtpFileTransferClient extends AbstractFileTransferClient {
         return true;
     }
 
-    public boolean transfer(InputStream inputStream, String targetPath) {
+    public boolean transfer(File file, String targetPath) {
         String dirPath = null;
         String filename = targetPath;
 
@@ -70,7 +71,7 @@ public class FtpFileTransferClient extends AbstractFileTransferClient {
             }
 
             ftpClient.enterLocalPassiveMode();
-            boolean result = ftpClient.storeFile(filename, inputStream);
+            boolean result = ftpClient.storeFile(filename, new FileInputStream(file));
             Log.i(TAG, "ftp transfer to '" + targetPath + "' " + (result ? "was successful" : "FAILED"));
             return result;
         } catch (IOException e) {

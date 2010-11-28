@@ -5,6 +5,6 @@ import java.io.InputStream;
 
 public interface FileTransferClient {
     boolean connect();
-    boolean transfer(InputStream inputStream, String targetPath);
+    boolean transfer(File file, String targetPath);
     boolean disconnect();
 }

@@ -23,6 +23,7 @@ import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
 import de.syncdroid.transfer.FileTransferClient;
 import de.syncdroid.transfer.impl.FtpFileTransferClient;
+import de.syncdroid.transfer.impl.ScpFileTransferClient;
 import de.syncdroid.transfer.impl.SmbFileTransferClient;
 import de.syncdroid.work.AbstractCopyJob;
 
@@ -46,13 +47,9 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 			} else if (lastUpload == null || ( 
 					item.source != null && item.source.lastModified() 
 					> lastUpload)) {
-				BufferedInputStream inputStream=null;
-				inputStream = new BufferedInputStream(
-						new FileInputStream(item.source));
-
                 Log.i(TAG, "transfering '" + item.source + "' to '" + item.fullpath + "'");
 
-				if(!fileTransferClient.transfer(inputStream, Utils.combinePath(item.fullpath, item.name))) {
+				if(!fileTransferClient.transfer(item.source, Utils.combinePath(item.fullpath, item.name))) {
                     updateStatus("error transfering file", ProfileStatusLevel.ERROR, item.fullpath);
                     Log.e(TAG, "error transfering file '" + item.fullpath + "'");
                 }
@@ -68,7 +65,6 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 				notification.setLatestEventInfo(context,
 						"upload in progress", msg, contentIntent);
 				notificationManager.notify(R.string.remote_service_started, notification);
-				inputStream.close();
 			} else {
 				filesToTransfer --;
 			}
@@ -136,11 +132,22 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 			Long transferBegin = System.currentTimeMillis();
 
 			FileTransferClient fileTransferClient = null;
-			
+
+            if(profile.getProfileType() == null) {
+			    Log.e(TAG, "invalid profile type");
+                updateStatus("unsupported profile type",
+                        ProfileStatusLevel.ERROR, "");
+                return ;
+            }
+
 			switch (profile.getProfileType()) {
-			case FTP: 
+			case FTP:
 				fileTransferClient = new FtpFileTransferClient(profile.getHostname(),
 						profile.getUsername(), profile.getPassword());
+				break;
+			case SCP:
+				fileTransferClient = new ScpFileTransferClient(profile.getHostname(),
+						profile.getUsername(), profile.getPassword(), context);
 				break;
 			case SMB:
                 String domain = null;
