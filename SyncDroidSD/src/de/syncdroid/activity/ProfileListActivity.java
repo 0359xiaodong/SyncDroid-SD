@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.syncdroid.ProfileStatusLevel;
 import roboguice.inject.InjectView;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -31,7 +32,7 @@ import de.syncdroid.R;
 import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.service.ProfileService;
 import de.syncdroid.service.SyncService;
-import de.syncdroid.work.ftp.OneWayFtpCopyJob;
+import de.syncdroid.work.OneWayCopyJob;
 
 public class ProfileListActivity extends AbstractActivity {
 	static final String TAG = "ProfileListActivity";
@@ -41,8 +42,20 @@ public class ProfileListActivity extends AbstractActivity {
 	@InjectView(R.id.txtProfileCount)		 TextView txtProfilesCount;
 	
 	private Profile currentlyLongClickedProfile = null;
-	
-	private Map<Long, String> profileStatusById = new HashMap<Long, String>();
+
+    private class ProfileStatus {
+        String message;
+        String detailMessage;
+        ProfileStatusLevel level;
+
+        public ProfileStatus(String message, String detailMessage, ProfileStatusLevel level) {
+            this.message = message;
+            this.detailMessage = detailMessage;
+            this.level = level;
+        }
+    }
+
+	private Map<Long, ProfileStatus> profileStatusById = new HashMap<Long, ProfileStatus>();
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -131,7 +144,7 @@ public class ProfileListActivity extends AbstractActivity {
 
         
         IntentFilter filter = new IntentFilter();
-        filter.addAction(OneWayFtpCopyJob.ACTION_PROFILE_UPDATE);
+        filter.addAction(OneWayCopyJob.ACTION_PROFILE_UPDATE);
 		this.registerReceiver(this.receiver, filter);
 
 		updateProfileList();
@@ -232,21 +245,43 @@ public class ProfileListActivity extends AbstractActivity {
 			}
 
 			final String UNKNOWN = "unknown";
-			
-			String text = UNKNOWN;
-			
+
+            ProfileStatus profileStatus = null;
 			if(profileStatusById.get(p.getId()) != null) {
-				text = profileStatusById.get(p.getId());
+                profileStatus = profileStatusById.get(p.getId());
 			}
-			
+
+			String text = UNKNOWN;
+			String detailMessage = "";
+            ProfileStatusLevel level = ProfileStatusLevel.INFO;
+
+            if(profileStatus != null) {
+                level = profileStatus.level;
+                text = profileStatus.message;
+                detailMessage = profileStatus.detailMessage;
+            }
+
 			label = (TextView) row.findViewById(R.id.txtProfileStatus);
 			label.setText(text);
 
-			if (UNKNOWN.equals(text)) {
-				label.setTextColor(mContext.getResources().getColor(R.color.white));
-			} else {
-				label.setTextColor(mContext.getResources().getColor(R.color.green));
-			}
+
+            switch (level) {
+                case INFO:
+                    label.setTextColor(mContext.getResources().getColor(R.color.white));
+                    break;
+                case WARN:
+                    label.setTextColor(mContext.getResources().getColor(R.color.yellow));
+                    break;
+                case ERROR:
+                    label.setTextColor(mContext.getResources().getColor(R.color.red));
+                    break;
+                case SUCCESS:
+                    label.setTextColor(mContext.getResources().getColor(R.color.green));
+                    break;
+            }
+
+			label = (TextView) row.findViewById(R.id.txtProfileStatusDetail);
+			label.setText(detailMessage);
 
 			return row;
 		}
@@ -258,8 +293,10 @@ public class ProfileListActivity extends AbstractActivity {
 		public void onReceive(Context context, Intent intent) {
 			Long id = intent.getExtras().getLong(EXTRA_ID);
         	String msg = intent.getExtras().getString(EXTRA_MESSAGE);
+            String detailMsg = intent.getExtras().getString(EXTRA_DETAILMESSAGE);
+            ProfileStatusLevel level = ProfileStatusLevel.valueOf(intent.getExtras().getString(EXTRA_LEVEL));
 			Log.d(TAG, "onReceive() : " + msg);
-        	profileStatusById.put(id, msg);
+        	profileStatusById.put(id, new ProfileStatus(msg, detailMsg, level));
         	//lstProfiles.invalidate();
         	lstProfiles.invalidateViews();
 		}

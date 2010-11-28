@@ -19,8 +19,7 @@ import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.model.ProfileType;
 import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
-import de.syncdroid.work.ftp.OneWayFtpCopyJob;
-import de.syncdroid.work.ftp.OneWaySmbCopyJob;
+import de.syncdroid.work.OneWayCopyJob;
 
 public class SyncService extends GuiceService {
 	private static final String TAG = "SyncService";
@@ -83,16 +82,9 @@ public class SyncService extends GuiceService {
 				public void run() {
 					Looper.prepare();
 					for(Profile profile : profileService.list()) {
-
-                        if(profile.getProfileType() == ProfileType.SMB) {
-                            new OneWaySmbCopyJob(
-                                    SyncService.this, profile,
-                                    profileService, locationService).run();
-                        }    else {
-                            new OneWayFtpCopyJob(
-                                    SyncService.this, profile,
-                                    profileService, locationService).run();
-                        }
+                        new OneWayCopyJob(
+                                SyncService.this, profile,
+                                profileService, locationService).run();
 					}
 				}
 			};
