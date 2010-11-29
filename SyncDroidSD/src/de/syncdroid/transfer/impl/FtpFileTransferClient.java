@@ -56,12 +56,13 @@ public class FtpFileTransferClient extends AbstractFileTransferClient {
         }
 
         try {
-            if(currentWorkingDirectory != dirPath) {
+            if(currentWorkingDirectory != dirPath &&((currentWorkingDirectory == null || dirPath == null)
+                    || (currentWorkingDirectory.equals(dirPath) == false))) {
                 if(dirPath == null) {
                    dirPath = "";
                 }
 
-                if(ftpClient.changeWorkingDirectory(dirPath)) {
+                if(cwd(dirPath)) {
                     currentWorkingDirectory = dirPath;
                 } else {
                     if(!createFolderStructure(dirPath)) {

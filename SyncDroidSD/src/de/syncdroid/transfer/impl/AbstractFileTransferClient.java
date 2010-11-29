@@ -53,6 +53,14 @@ public abstract class AbstractFileTransferClient implements FileTransferClient {
                     rest = null;
                 }
 
+                Log.d(TAG, "createFolderStructure() remains: '" + remains + "'");
+                Log.d(TAG, "createFolderStructure() parent: '" + parent + "'");
+                Log.d(TAG, "createFolderStructure() rest: '" + rest + "'");
+
+                if(parent != null && "".equals(parent)) {
+                    return true;
+                }
+
                 if(cwd(parent)) {
                     remains = rest;
                     currentWorkingDirectory = Utils.combinePath(currentWorkingDirectory, parent);

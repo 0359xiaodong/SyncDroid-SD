@@ -75,7 +75,8 @@ public class SmbFileTransferClient extends AbstractFileTransferClient {
         Log.d(TAG, "currentWorkingDirectory= '" + currentWorkingDirectory + "' ");
 
         try {
-            if(currentWorkingDirectory != dirPath) {
+            if(currentWorkingDirectory != dirPath &&((currentWorkingDirectory == null || dirPath == null)
+                    || (currentWorkingDirectory.equals(dirPath) == false))) {
                 if(dirPath == null) {
                    dirPath = "";
                 }
@@ -92,7 +93,6 @@ public class SmbFileTransferClient extends AbstractFileTransferClient {
                     }
                 }
             }
-
 
             Log.d(TAG, "path= '" + pathPrefix + targetPath + "' ");
             SmbFile smbFile = new SmbFile(pathPrefix + targetPath, passwordAuthentication);

@@ -147,7 +147,7 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 				break;
 			case SCP:
 				fileTransferClient = new ScpFileTransferClient(profile.getHostname(),
-						profile.getUsername(), profile.getPassword(), context);
+						profile.getUsername(), profile.getPassword(), null);
 				break;
 			case SMB:
                 String domain = null;
