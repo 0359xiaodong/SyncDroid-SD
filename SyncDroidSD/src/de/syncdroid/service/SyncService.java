@@ -22,7 +22,7 @@ import de.syncdroid.work.OneWayCopyJob;
 
 public class SyncService extends GuiceService {
 	private static final String TAG = "SyncService";
-	private static final int POLL_INTERVALL = 3000;
+	private static final int POLL_INTERVALL = 30000;
 
 	public static final String TIMER_TICK = "de.syncdroid.TIMER_TICK";
 	public static final String INTENT_START_TIMER = "de.syncdroid.INTENT_START_TIMER";
