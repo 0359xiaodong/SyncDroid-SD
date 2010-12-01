@@ -30,7 +30,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class AbstractCopyJob {
-	private static final String TAG = "FtpCopyJob";
+	protected static final String TAG = "CopyJob";
 
 	public static final String ACTION_PROFILE_UPDATE
 		= "de.syncdroid.ACTION_PROFILE_UPDATE";
@@ -122,37 +122,38 @@ public class AbstractCopyJob {
 	}
 
     protected RemoteFile buildTree(File dir, String fullpath, Long newerThan) {
-        Log.i(TAG, "buildTree with fullpath: '" + fullpath + "'");
         RemoteFile here = new RemoteFile();
         here.isDirectory = true;
         here.name = dir.getName();
         here.fullpath = fullpath;
         here.source = dir;
         here.newest = 0L;
-
-        for (String item : dir.list()) {
-            File fileItem = new File(dir, item);
-            if (fileItem.isDirectory()) {
-                RemoteFile tmp = buildTree(fileItem, Utils.combinePath(fullpath, item), newerThan);
-                here.children.add(tmp);
-                Log.d(TAG, " - adding: " + tmp.name);
-                here.newest = Math.max(here.newest, tmp.newest);
-            } else {
-                RemoteFile aFile = new RemoteFile();
-                aFile.isDirectory = false;
-                aFile.name = item;
-                aFile.source = fileItem;
-                aFile.fullpath = fullpath;
-
-                if(newerThan == null || fileItem.lastModified() > newerThan) {
-                    here.children.add(aFile);
-                    filesToTransfer ++;
-                    here.newest = Math.max(here.newest, fileItem.lastModified());
-                }
-            }
+        
+        String[] list = dir.list();
+        if(list != null) {
+	        for (String item : list) {
+	            File fileItem = new File(dir, item);
+	            if (fileItem.isDirectory()) {
+	                RemoteFile tmp = buildTree(fileItem, 
+	                		Utils.combinePath(fullpath, item), newerThan);
+	                here.children.add(tmp);
+	                here.newest = Math.max(here.newest, tmp.newest);
+	            } else {
+	                RemoteFile aFile = new RemoteFile();
+	                aFile.isDirectory = false;
+	                aFile.name = item;
+	                aFile.source = fileItem;
+	                aFile.fullpath = fullpath;
+	
+	                if(newerThan == null || fileItem.lastModified() > newerThan) {
+	                    here.children.add(aFile);
+	                    filesToTransfer ++;
+	                    here.newest = Math.max(here.newest, fileItem.lastModified());
+	                }
+	            }
+	        }
         }
 
         return here;
     }
-
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="clear_logs">clear logs</string>
     <string name="authenticate_with_dropbox">Authenticate with Dropbox</string>
     <string name="port">Port</string>
     <string name="enabled">Enabled</string>

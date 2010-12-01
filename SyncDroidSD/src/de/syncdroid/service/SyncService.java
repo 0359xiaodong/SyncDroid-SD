@@ -32,6 +32,8 @@ public class SyncService extends GuiceService {
 	
 	@Inject
 	private LocationService locationService;
+	
+	private Boolean timerStarted = false;
 
 	private Thread thread = null;
 
@@ -52,6 +54,11 @@ public class SyncService extends GuiceService {
 				}
 			} else if (intent.getAction().equals(INTENT_START_TIMER)
 					|| intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+				
+				if(timerStarted) {
+					return;
+				}
+				
 				Log.d(TAG, "set timer");
 				AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 				Intent i = new Intent(this, SyncBroadcastReceiver.class);
@@ -64,6 +71,8 @@ public class SyncService extends GuiceService {
 				PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
 				mgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
 						SystemClock.elapsedRealtime(), POLL_INTERVALL, pi);
+				
+				timerStarted = true;
 				
 				if (thread != null && thread.isAlive()) {
 					Log.w(TAG, "WARNING: TIMER_TICKET while running syncIt");

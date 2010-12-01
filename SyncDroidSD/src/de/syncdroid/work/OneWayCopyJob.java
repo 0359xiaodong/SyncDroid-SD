@@ -26,9 +26,7 @@ import de.syncdroid.transfer.impl.FtpFileTransferClient;
 import de.syncdroid.transfer.impl.ScpFileTransferClient;
 import de.syncdroid.transfer.impl.SmbFileTransferClient;
 
-public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
-	private static final String TAG = "FtpCopyJob";
-	
+public class OneWayCopyJob extends AbstractCopyJob implements Runnable {	
 	private SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
 
 	public OneWayCopyJob(Context context, Profile profile,
@@ -93,14 +91,14 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 				Log.e(TAG, "path is null :-(");
 				Toast.makeText(context, "invalid path for profile '" 
 						+ profile.getName() + "'", 2000).show();
-				return ;
+				return ; 
 			}
 			
 			File file = new File(path);
 
 			if(file.exists() == false) {
-				updateStatus("file not found: ", ProfileStatusLevel.ERROR, path);
-				Log.e(TAG, "file not found: " + path);
+				updateStatus("file not found: '" + path + "'", ProfileStatusLevel.ERROR, path);
+				Log.e(TAG, "file not found: '" + path + "'");
 				Toast.makeText(context, "localPath not found for profile '" 
 						+ profile.getName() + "': " + path, 2000).show();
 				return ;

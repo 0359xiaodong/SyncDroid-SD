@@ -76,7 +76,7 @@ android:layout_width="fill_parent"></EditText>
 	                 android:layout_marginRight="10px" android:layout_width="wrap_content">
 	                 
 	    <TextView android:id="@+id/TextView02" android:layout_width="wrap_content" 
-	    android:layout_height="wrap_content" android:text="@string/port"></TextView>
+	    android:layout_height="wrap_content" android:text="@string/port" android:layout_marginRight="20px"></TextView>
 	   <EditText android:id="@+id/EditText07" android:layout_height="wrap_content" android:layout_width="fill_parent" android:clickable="true"></EditText>
 	       
 	</LinearLayout>

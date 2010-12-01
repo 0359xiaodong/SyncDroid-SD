@@ -116,6 +116,9 @@ public class LocationListActivity extends AbstractActivity {
         Log.d(TAG, "onResume()");
         super.onResume();
 
+		Intent myIntent = new Intent(this, SyncService.class);
+		myIntent.setAction(SyncService.INTENT_START_TIMER);
+		startService(myIntent);
 
 		updateLocationList();
 	}
