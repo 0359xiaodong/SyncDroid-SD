@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Profile implements Model {
 	private Long id;
+	private Boolean enabled = true;
 	private String name;
 	private Date lastSync;
 	private Boolean onlyIfWifi = false;
@@ -16,9 +17,10 @@ public class Profile implements Model {
 	private String remotePath;
 	
 	private ProfileType profileType;
-	private Location location;	
-	
-	@Override
+	private SyncType syncType;
+	private Location location;
+
+    @Override
 	public String toString() {
 		return name;
 	}
@@ -99,4 +101,20 @@ public class Profile implements Model {
 	public void setProfileType(ProfileType profileType) {
 		this.profileType = profileType;
 	}
+
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
+    public SyncType getSyncType() {
+        return syncType;
+    }
+
+    public void setSyncType(SyncType syncType) {
+        this.syncType = syncType;
+    }
+
 }

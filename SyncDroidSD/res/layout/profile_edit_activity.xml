@@ -14,22 +14,136 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:keepScreenOn="false">
-    <!-- Here you put the rest of your current view-->
 
-<TextView android:id="@+id/TextView07" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/profile_name"></TextView><EditText android:id="@+id/EditText06" android:layout_height="wrap_content" android:layout_width="fill_parent"></EditText><TextView android:id="@+id/TextView09" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/profile_type"></TextView><Spinner android:id="@+id/Spinner02" android:layout_width="wrap_content" android:layout_height="wrap_content"></Spinner><TextView android:id="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/local_directory"></TextView><EditText android:id="@+id/EditText01" android:layout_height="wrap_content" android:layout_width="fill_parent"></EditText>
+<TextView android:id="@+id/TextView07" android:layout_width="wrap_content" 
+android:layout_height="wrap_content" android:text="@string/profile_name"></TextView>
+<EditText android:id="@+id/EditText06" android:layout_height="wrap_content" 
+android:layout_width="fill_parent"></EditText>
 
-<TextView android:id="@+id/TextView02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ftp_host"></TextView>
-<EditText android:id="@+id/EditText02" android:layout_height="wrap_content" android:layout_width="fill_parent"></EditText>
-<TextView android:id="@+id/TextView03" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ftp_username"></TextView>
-<EditText android:id="@+id/EditText03" android:layout_height="wrap_content" android:layout_width="fill_parent"></EditText>
-<TextView android:id="@+id/TextView04" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ftp_password"></TextView>
-<EditText android:id="@+id/EditText04" android:layout_height="wrap_content" android:layout_width="fill_parent" android:inputType="textPassword"></EditText>
-<TextView android:id="@+id/TextView05" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ftp_path"></TextView>
-<EditText android:id="@+id/EditText05" android:layout_height="wrap_content" android:layout_width="fill_parent"></EditText>
-<TextView android:id="@+id/TextView06" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/profile_options"></TextView>
-<CheckBox android:id="@+id/CheckBox01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/only_if_wifi"></CheckBox>
-<TextView android:id="@+id/TextView08" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/only_when_at_location"></TextView>
-<Spinner android:id="@+id/Spinner01" android:layout_height="wrap_content" android:layout_width="fill_parent"></Spinner>
+<LinearLayout android:id="@+id/LinearLayout01" 
+			  android:layout_width="wrap_content" 
+			  android:layout_height="wrap_content"
+    		  android:orientation="horizontal">
+
+	<LinearLayout android:id="@+id/LinearLayout01" 
+				  android:layout_width="wrap_content" 
+				  android:layout_height="wrap_content"
+	    		  android:orientation="vertical">
+		<TextView android:id="@+id/TextView09" android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" android:text="@string/profile_type"></TextView>
+		<Spinner android:id="@+id/Spinner02" android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Spinner>
+	
+	</LinearLayout>
+	
+	<LinearLayout android:id="@+id/LinearLayout01" 
+				  android:layout_width="wrap_content" 
+				  android:layout_height="wrap_content"
+	    		  android:orientation="vertical" android:layout_marginLeft="10px">
+		<TextView android:id="@+id/TextView10" android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" android:text="@string/profile_enabled"></TextView>
+		<CheckBox android:id="@+id/CheckBox02" android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" android:text="@string/enabled"></CheckBox>
+	</LinearLayout>
+	
+    <LinearLayout android:id="@+id/LinearLayout01" 
+                  android:layout_width="wrap_content" 
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical" android:layout_marginLeft="10px">
+		<TextView android:id="@+id/TextView11" android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" android:text="@string/sync_type"></TextView>
+		<Spinner android:id="@+id/Spinner03" android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Spinner>
+    </LinearLayout>
+</LinearLayout>
+
+<TextView android:id="@+id/TextView01" android:layout_width="wrap_content" 
+android:layout_height="wrap_content" android:text="@string/local_directory"></TextView>
+<EditText android:id="@+id/EditText01" android:layout_height="wrap_content" 
+android:layout_width="fill_parent"></EditText>
+<TextView android:id="@+id/TextView05" android:layout_width="wrap_content" 
+android:layout_height="wrap_content" android:text="@string/remote_directory"></TextView>
+<EditText android:id="@+id/EditText05" android:layout_height="wrap_content" 
+android:layout_width="fill_parent"></EditText>
+
+<LinearLayout android:id="@+id/HostPortWrapper" android:orientation="horizontal" 
+        android:layout_height="wrap_content" android:layout_width="fill_parent">
+	<LinearLayout 
+	                 android:id="@+id/PortWrapper" 
+	                 android:orientation="vertical" 
+                     android:layout_height="wrap_content"
+	                 android:weightSum="1"
+	                 android:layout_marginRight="10px" android:layout_width="wrap_content">
+	                 
+	    <TextView android:id="@+id/TextView02" android:layout_width="wrap_content" 
+	    android:layout_height="wrap_content" android:text="@string/port"></TextView>
+	   <EditText android:id="@+id/EditText07" android:layout_height="wrap_content" android:layout_width="fill_parent" android:clickable="true"></EditText>
+	       
+	</LinearLayout>
+    <LinearLayout 
+                  android:id="@+id/HostWrapper"
+                  android:weightSum="2"
+                  android:orientation="vertical" 
+                  android:layout_height="wrap_content"
+                  android:layout_width="fill_parent">
+                  
+        <TextView android:id="@+id/TextView02" android:layout_width="wrap_content" 
+        android:layout_height="wrap_content" android:text="@string/hostname"></TextView>
+        <EditText android:id="@+id/EditText02" android:layout_height="wrap_content" 
+        android:layout_width="fill_parent"></EditText>
+        
+    </LinearLayout>
+</LinearLayout>
+
+<LinearLayout android:id="@+id/UsernamePasswordWrapper" 
+              android:layout_width="fill_parent" 
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+              
+	<TextView android:id="@+id/TextView03" android:layout_width="wrap_content" 
+	android:layout_height="wrap_content" android:text="@string/username"></TextView>
+	<EditText android:id="@+id/EditText03" android:layout_height="wrap_content" 
+	android:layout_width="fill_parent"></EditText>
+	<TextView android:id="@+id/TextView04" android:layout_width="wrap_content" 
+	android:layout_height="wrap_content" android:text="@string/password"></TextView>
+	<EditText android:id="@+id/EditText04" android:layout_height="wrap_content" 
+	android:layout_width="fill_parent" android:inputType="textPassword"></EditText>
+</LinearLayout>	
+
+
+<LinearLayout android:id="@+id/DropboxWrapper" 
+              android:layout_width="fill_parent" 
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+	<TextView android:id="@+id/TextView12" android:layout_width="wrap_content" 
+	android:layout_height="wrap_content" android:text="@string/authenticate_with_dropbox"></TextView>
+	
+	<Button android:id="@+id/AuthenticateWithDropbox" android:layout_width="wrap_content"
+	 android:layout_height="wrap_content" android:text="@string/authenticate_with_dropbox"></Button>
+</LinearLayout>
+
+<LinearLayout android:id="@+id/DropboxClearWrapper" 
+              android:layout_width="fill_parent" 
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+    <TextView android:id="@+id/TextView12" android:layout_width="wrap_content" 
+    android:layout_height="wrap_content" android:text="@string/authenticate_with_dropbox"></TextView>
+    
+    <Button android:id="@+id/ClearDropboxAuth" android:layout_width="wrap_content"
+     android:layout_height="wrap_content" android:text="@string/clear_dropbox_auth"></Button>
+</LinearLayout>
+ 
+ <TextView android:id="@+id/TextView06" android:layout_width="wrap_content" 
+android:layout_height="wrap_content" android:text="@string/profile_options"></TextView>
+
+<CheckBox android:id="@+id/CheckBox01" android:layout_width="wrap_content" 
+android:layout_height="wrap_content" android:text="@string/only_if_wifi"></CheckBox>
+<TextView android:id="@+id/TextView08" android:layout_width="wrap_content" 
+android:layout_height="wrap_content" android:text="@string/only_when_at_location"></TextView>
+<Spinner android:id="@+id/Spinner01" android:layout_height="wrap_content" 
+android:layout_width="fill_parent"></Spinner>
+
+
 
 
 

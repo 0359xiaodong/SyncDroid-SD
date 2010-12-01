@@ -1,16 +1,15 @@
 package de.syncdroid.transfer.impl;
 
-import android.util.Log;
-import de.syncdroid.Utils;
-import de.syncdroid.transfer.FileTransferClient;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileOutputStream;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-
-import java.io.*;
-import java.net.InetAddress;
+import android.util.Log;
+import de.syncdroid.Utils;
 
 public class SmbFileTransferClient extends AbstractFileTransferClient {
 
@@ -75,7 +74,8 @@ public class SmbFileTransferClient extends AbstractFileTransferClient {
         Log.d(TAG, "currentWorkingDirectory= '" + currentWorkingDirectory + "' ");
 
         try {
-            if(currentWorkingDirectory != dirPath) {
+            if(currentWorkingDirectory != dirPath &&((currentWorkingDirectory == null || dirPath == null)
+                    || (currentWorkingDirectory.equals(dirPath) == false))) {
                 if(dirPath == null) {
                    dirPath = "";
                 }
@@ -92,7 +92,6 @@ public class SmbFileTransferClient extends AbstractFileTransferClient {
                     }
                 }
             }
-
 
             Log.d(TAG, "path= '" + pathPrefix + targetPath + "' ");
             SmbFile smbFile = new SmbFile(pathPrefix + targetPath, passwordAuthentication);

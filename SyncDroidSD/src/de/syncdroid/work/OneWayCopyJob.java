@@ -1,9 +1,8 @@
 package de.syncdroid.work;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.Activity;
@@ -22,10 +21,10 @@ import de.syncdroid.db.model.Profile;
 import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
 import de.syncdroid.transfer.FileTransferClient;
+import de.syncdroid.transfer.impl.DropboxFileTransferClient;
 import de.syncdroid.transfer.impl.FtpFileTransferClient;
 import de.syncdroid.transfer.impl.ScpFileTransferClient;
 import de.syncdroid.transfer.impl.SmbFileTransferClient;
-import de.syncdroid.work.AbstractCopyJob;
 
 public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 	private static final String TAG = "FtpCopyJob";
@@ -49,13 +48,7 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 					> lastUpload)) {
                 Log.i(TAG, "transfering '" + item.source + "' to '" + item.fullpath + "'");
 
-				if(!fileTransferClient.transfer(item.source, Utils.combinePath(item.fullpath, item.name))) {
-                    updateStatus("error transfering file", ProfileStatusLevel.ERROR, item.fullpath);
-                    Log.e(TAG, "error transfering file '" + item.fullpath + "'");
-                }
-				transferedFiles  ++;
-
-				String msg = "transfering ... uploaded " + transferedFiles + "/" + filesToTransfer;
+                String msg = "transfering file " + (transferedFiles+1) + "/" + filesToTransfer;
 				Log.d(TAG, msg);
 
 			    updateStatus(msg, ProfileStatusLevel.INFO, item.name);
@@ -65,6 +58,12 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 				notification.setLatestEventInfo(context,
 						"upload in progress", msg, contentIntent);
 				notificationManager.notify(R.string.remote_service_started, notification);
+
+				if(!fileTransferClient.transfer(item.source, Utils.combinePath(item.fullpath, item.name))) {
+                    updateStatus("error transfering file", ProfileStatusLevel.ERROR, item.fullpath);
+                    Log.e(TAG, "error transfering file '" + item.fullpath + "'");
+                }
+				transferedFiles  ++;
 			} else {
 				filesToTransfer --;
 			}
@@ -75,11 +74,16 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 	public void run() {
 		Log.d(TAG, "lastSync: " + profile.getLastSync());
 
+		if(profile.getEnabled() == false) {
+			updateStatus("disabled", ProfileStatusLevel.INFO, "");
+			return;
+		}
+		
         if(testRunCondition() == false) {
             return;
         }
 		
-		updateStatus("checking for file status ...", ProfileStatusLevel.INFO, "");
+		//updateStatus("checking for file status ...", ProfileStatusLevel.INFO, "");
 		
 		try {
 			String path = profile.getLocalPath();
@@ -102,12 +106,17 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 
 			transferedFiles = 0;
 			filesToTransfer = 0;
-			RemoteFile rootRemote = buildTree(file, profile.getRemotePath(), profile.getLastSync().getTime());
+			
+			String remotePath = profile.getRemotePath();
+			Date lastSync = profile.getLastSync();
+			
+			RemoteFile rootRemote = buildTree(file, remotePath, 
+					lastSync != null ? lastSync.getTime() : null);
 			
 			if (profile.getLastSync() != null 
 					&& rootRemote.newest <= profile.getLastSync().getTime()) {
 				Log.d(TAG, "nothing to do");
-				updateStatus("nothing to do", ProfileStatusLevel.SUCCESS, "");
+				//updateStatus("nothing to do", ProfileStatusLevel.SUCCESS, "");
 				return;
 			}
 
@@ -142,12 +151,14 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 
 			switch (profile.getProfileType()) {
 			case FTP:
-				fileTransferClient = new FtpFileTransferClient(profile.getHostname(),
-						profile.getUsername(), profile.getPassword());
+				fileTransferClient = new FtpFileTransferClient(
+						profile.getHostname(), profile.getUsername(), 
+						profile.getPassword(), profile.getPort());
 				break;
 			case SCP:
-				fileTransferClient = new ScpFileTransferClient(profile.getHostname(),
-						profile.getUsername(), profile.getPassword(), context);
+				fileTransferClient = new ScpFileTransferClient(
+						profile.getHostname(), profile.getUsername(), 
+						profile.getPassword(), profile.getPort(), null);
 				break;
 			case SMB:
                 String domain = null;
@@ -164,6 +175,9 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 				fileTransferClient = new SmbFileTransferClient(profile.getHostname(),
 						domain, username, profile.getPassword());
 				break;
+			case DROPBOX: 
+				fileTransferClient = new DropboxFileTransferClient();
+				break;
             default:
 			    Log.e(TAG, "unsupported profile type: '" + profile.getProfileType().toString() + "'");
                 updateStatus("unsupported profile type: '" + profile.getProfileType().toString() + "'",
@@ -177,6 +191,7 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
                 return ;
             }
 
+            // this does all the hard work
 			uploadFiles(rootRemote, fileTransferClient, profile.getLastSync() != null ? 
 					profile.getLastSync().getTime() : null);
 
@@ -184,9 +199,15 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 			
 			Long transferTimeSeconds = (transferFinish - transferBegin) / 1000;
 			
-			String msg = "finished. uploaded " + transferedFiles + "/" 
+			Date now = new Date();
+			SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+			
+			String msg = "finished at " + format.format(now) + ". uploaded " 
+				+ transferedFiles + "/" 
 				+ filesToTransfer + " in " + transferTimeSeconds + " seconds";
 			Log.d(TAG, msg);
+			
+			updateStatus("success", ProfileStatusLevel.SUCCESS, msg);
 
 			notification.setLatestEventInfo(context,
 					"upload success", msg, contentIntent);

@@ -55,4 +55,14 @@ ALTER TABLE profiles
 ADD COLUMN profile_type VARCHAR(255);
 </string>
  
+<string name="update003">
+ALTER TABLE profiles 
+ADD COLUMN enabled BOOLEAN;
+</string>
+
+<string name="update004">
+ALTER TABLE profiles 
+ADD COLUMN port INTEGER;
+</string>
+ 
 </resources>

@@ -38,7 +38,9 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 		} catch (ParseException e) {
 			Log.e(TAG, "parseException for: " + dateString);
 		}
+		
 		obj.setOnlyIfWifi(cursor.getInt(cursor.getColumnIndex("onlyIfWifi")) == 1);
+		obj.setEnabled(cursor.getInt(cursor.getColumnIndex("enabled")) == 1);
 		obj.setHostname(cursor.getString(cursor.getColumnIndex("hostname")));
 		obj.setUsername(cursor.getString(cursor.getColumnIndex("username")));
 		obj.setPassword(cursor.getString(cursor.getColumnIndex("password")));
@@ -47,7 +49,7 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 		
 		obj.setProfileType(ProfileType.getByCode(
 				cursor.getString(cursor.getColumnIndex("profile_type"))));
-		//obj.setPort(cursor.getInt(cursor.getColumnIndex("port")));
+		obj.setPort(cursor.getInt(cursor.getColumnIndex("port")));
 		
 
 		Long locationId = cursor.getLong(cursor.getColumnIndex("location_id"));
@@ -65,6 +67,8 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 		values.put("name", obj.getName());
 		values.put("onlyIfWifi", (obj.getOnlyIfWifi() != null 
 				? obj.getOnlyIfWifi() : false) ? 1 : 0);
+		values.put("enabled", (obj.getEnabled() != null 
+				? obj.getEnabled() : false) ? 1 : 0);
 
 		values.put("hostname", obj.getHostname());
 		values.put("username", obj.getUsername());
@@ -75,6 +79,8 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 		
 		values.put("lastSync", obj.getLastSync() == null ? null : 			
 			dateFormat.format(obj.getLastSync()));
+		
+		values.put("port", obj.getPort());
 		
 		if(obj.getLocation() != null) {
 			if(obj.getLocation().getId() == null) {

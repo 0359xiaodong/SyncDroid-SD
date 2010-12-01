@@ -62,10 +62,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="SmbFileTransferClient.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/impl/SmbFileTransferClient.java">
+      <file leaf-file-name="ScpFileTransferClient.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/impl/ScpFileTransferClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="124" column="19" selection-start="4184" selection-end="4184" vertical-scroll-proportion="0.0">
+            <state line="263" column="85" selection-start="8134" selection-end="8134" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DropboxFileTransferClient.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/impl/DropboxFileTransferClient.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="25" column="14" selection-start="876" selection-end="876" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -74,7 +83,34 @@
       <file leaf-file-name="ProfileType.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/de/syncdroid/db/model/ProfileType.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="29" selection-start="269" selection-end="269" vertical-scroll-proportion="0.0">
+            <state line="19" column="68" selection-start="296" selection-end="296" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SyncType.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/de/syncdroid/db/model/SyncType.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="19" column="0" selection-start="312" selection-end="312" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="profile_edit_activity.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/res/layout/profile_edit_activity.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="45" column="35" selection-start="2567" selection-end="2567" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ProfileEditActivity.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/de/syncdroid/activity/ProfileEditActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="150" column="52" selection-start="5174" selection-end="5174" vertical-scroll-proportion="0.85748506">
               <folding />
             </state>
           </provider>
@@ -83,72 +119,7 @@
       <file leaf-file-name="FtpFileTransferClient.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/impl/FtpFileTransferClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="71" column="73" selection-start="2219" selection-end="2219" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ScpFileTransferClient.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/impl/ScpFileTransferClient.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="41" column="26" selection-start="1080" selection-end="1080" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="OneWayCopyJob.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/de/syncdroid/work/OneWayCopyJob.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="17" selection-start="1316" selection-end="1316" vertical-scroll-proportion="0.17668712">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SyncModule.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/syncdroid/SyncModule.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="64" selection-start="963" selection-end="963" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SyncApplication.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/syncdroid/SyncApplication.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="40" selection-start="223" selection-end="223" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FileTransferClient.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/FileTransferClient.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="30" selection-start="173" selection-end="173" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SyncService.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/syncdroid/service/SyncService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="52" column="17" selection-start="1533" selection-end="1533" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="LocationDiscoveryService.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/de/syncdroid/service/LocationDiscoveryService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="45" column="22" selection-start="1673" selection-end="1673" vertical-scroll-proportion="0.0">
+            <state line="90" column="48" selection-start="1737" selection-end="2977" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -168,12 +139,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/de/syncdroid/work/ftp/OneWaySmbCopyJob.java" />
-        <option value="$PROJECT_DIR$/src/de/syncdroid/activity/ProfileListActivity.java" />
-        <option value="$PROJECT_DIR$/src/de/syncdroid/work/ftp/AbstractCopyJob.java" />
-        <option value="$PROJECT_DIR$/src/de/syncdroid/work/ftp/FileTransferClient.java" />
-        <option value="$PROJECT_DIR$/src/de/syncdroid/work/ftp/SmbFileTransferClient.java" />
-        <option value="$PROJECT_DIR$/src/de/syncdroid/work/ftp/OneWayCopyJob.java" />
         <option value="$PROJECT_DIR$/src/de/syncdroid/service/SyncService.java" />
         <option value="$PROJECT_DIR$/src/de/syncdroid/Utils.java" />
         <option value="$PROJECT_DIR$/src/de/syncdroid/work/AbstractCopyJob.java" />
@@ -181,9 +146,15 @@
         <option value="$PROJECT_DIR$/src/de/syncdroid/transfer/FileTransferClient.java" />
         <option value="$PROJECT_DIR$/src/de/syncdroid/transfer/impl/FtpFileTransferClient.java" />
         <option value="$PROJECT_DIR$/src/de/syncdroid/transfer/impl/SmbFileTransferClient.java" />
-        <option value="$PROJECT_DIR$/src/de/syncdroid/db/model/ProfileType.java" />
         <option value="$PROJECT_DIR$/src/de/syncdroid/work/OneWayCopyJob.java" />
         <option value="$PROJECT_DIR$/src/de/syncdroid/transfer/impl/ScpFileTransferClient.java" />
+        <option value="$PROJECT_DIR$/src/de/syncdroid/transfer/impl/DropboxFileTransferClient.java" />
+        <option value="$PROJECT_DIR$/src/de/syncdroid/db/model/ProfileType.java" />
+        <option value="$PROJECT_DIR$/src/de/syncdroid/db/model/SyncType.java" />
+        <option value="$PROJECT_DIR$/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/res/layout/profile_edit_activity.xml" />
+        <option value="$PROJECT_DIR$/src/de/syncdroid/db/model/Profile.java" />
+        <option value="$PROJECT_DIR$/src/de/syncdroid/activity/ProfileEditActivity.java" />
       </list>
     </option>
   </component>
@@ -233,6 +204,8 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -264,10 +237,6 @@
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="syncdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -284,80 +253,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="syncdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="work" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SyncDroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SyncDroidSD" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="syncdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="transfer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SyncDroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SyncDroidSD" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="syncdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="transfer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impl" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SyncDroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SyncDroidSD" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="syncdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="service" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -445,14 +340,12 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="lib" />
+              <option name="myItemId" value="res" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Favorites" />
-      <pane id="PackagesPane" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -470,11 +363,12 @@
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="de.syncdroid.db.model" />
       <recent name="de.syncdroid.transfer.impl" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -516,24 +410,6 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Make" enabled="true" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -559,6 +435,24 @@
       <envs />
       <properties />
       <listeners />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
@@ -673,26 +567,26 @@
     <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1416" height="1026" extended-state="6" />
+    <frame x="-8" y="-8" width="1696" height="1026" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.14467593" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19907407" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24296296" sideWeight="0.6331019" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24294479" sideWeight="0.6331019" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298611" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Android Logcat" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36689815" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.14467593" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19907407" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962963" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -733,102 +627,96 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/activity/ProfileListActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="251" column="32" selection-start="7542" selection-end="7542" vertical-scroll-proportion="0.4618182" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/values/colors.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="0" selection-start="296" selection-end="296" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/Utils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="50" selection-start="189" selection-end="189" vertical-scroll-proportion="0.14601228" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/work/AbstractCopyJob.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="146" column="40" selection-start="4992" selection-end="4992" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="33" selection-start="992" selection-end="992" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/impl/AbstractFileTransferClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="30" selection-start="1106" selection-end="1106" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/impl/FtpFileTransferClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="71" column="73" selection-start="2219" selection-end="2219" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/impl/SmbFileTransferClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="124" column="19" selection-start="4184" selection-end="4184" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/db/model/ProfileType.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="29" selection-start="269" selection-end="269" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/service/SyncService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="17" selection-start="1533" selection-end="1533" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/service/LocationDiscoveryService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="22" selection-start="1673" selection-end="1673" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/FileTransferClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="30" selection-start="173" selection-end="173" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/SyncApplication.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="40" selection-start="223" selection-end="223" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="124" column="19" selection-start="4184" selection-end="4184" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/de/syncdroid/SyncModule.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="64" selection-start="963" selection-end="963" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="25" column="64" selection-start="963" selection-end="963" vertical-scroll-proportion="0.50898206" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/impl/ScpFileTransferClient.java">
+    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/SyncApplication.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="26" selection-start="1080" selection-end="1080" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
+        <state line="10" column="40" selection-start="223" selection-end="223" vertical-scroll-proportion="0.2035928" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/FileTransferClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="30" selection-start="173" selection-end="173" vertical-scroll-proportion="0.14251497" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/service/SyncService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="17" selection-start="1533" selection-end="1533" vertical-scroll-proportion="0.020359281" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/service/LocationDiscoveryService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="22" selection-start="1673" selection-end="1673" vertical-scroll-proportion="0.020359281" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/de/syncdroid/work/OneWayCopyJob.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="17" selection-start="1316" selection-end="1316" vertical-scroll-proportion="0.17668712">
+        <state line="50" column="43" selection-start="1877" selection-end="1877" vertical-scroll-proportion="0.30538923" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/impl/ScpFileTransferClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="263" column="85" selection-start="8134" selection-end="8134" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/impl/FtpFileTransferClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="90" column="48" selection-start="1737" selection-end="2977" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/db/model/ProfileType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="68" selection-start="296" selection-end="296" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/db/model/SyncType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="0" selection-start="312" selection-end="312" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="44" selection-start="2082" selection-end="2097" vertical-scroll-proportion="0.79263806">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/layout/profile_edit_activity.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="35" selection-start="2567" selection-end="2567" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/db/model/Profile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="118" column="0" selection-start="2333" selection-end="2333" vertical-scroll-proportion="0.95828223">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/transfer/impl/DropboxFileTransferClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="14" selection-start="876" selection-end="876" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/de/syncdroid/activity/ProfileEditActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="150" column="52" selection-start="5174" selection-end="5174" vertical-scroll-proportion="0.85748506">
           <folding />
         </state>
       </provider>

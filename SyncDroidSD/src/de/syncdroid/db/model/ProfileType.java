@@ -4,7 +4,8 @@ public enum ProfileType {
 	FTP("FTP"),
     SCP("SFTP / SCP"),
     //FTPs("FTPs"),
-    SMB("SMB");
+    SMB("SMB"),
+    DROPBOX("Dropbox");
 	
 	ProfileType(String code) {
 		this.code = code;
@@ -26,6 +27,8 @@ public enum ProfileType {
 			return FTPs;*/
 		if("SMB".equals(code))
 			return SMB;
+		if("Dropbox".equals(code))
+			return DROPBOX;
 
 		return null;
 	}

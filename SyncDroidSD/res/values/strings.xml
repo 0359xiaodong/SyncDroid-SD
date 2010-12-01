@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="authenticate_with_dropbox">Authenticate with Dropbox</string>
+    <string name="port">Port</string>
+    <string name="enabled">Enabled</string>
+    <string name="remote_directory">Remote Directory</string>
+    <string name="password">Password</string>
+    <string name="profile_enabled">Profile Enabled</string>
     <string name="username">Username</string>
     <string name="hostname">Hostname</string>
     <string name="profile_type">Profile Type</string>
@@ -31,4 +37,6 @@
 	<string name="remote_service_connected">Remote Service connected</string>
 	<string name="remote_service_disconnected">Remote Service disconnected</string>
 	<string name="remote_service_label">Remote Service Label</string>
+    <string name="sync_type">Synchronization Type</string>
+<string name="clear_dropbox_auth">Clear Dropbox Authentication Data</string>
 </resources>

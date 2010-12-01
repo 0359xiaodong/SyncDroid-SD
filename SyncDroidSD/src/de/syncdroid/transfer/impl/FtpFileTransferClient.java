@@ -1,38 +1,46 @@
 package de.syncdroid.transfer.impl;
 
-import android.util.Log;
-import de.syncdroid.Utils;
-import de.syncdroid.transfer.FileTransferClient;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
+
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+
+import android.util.Log;
 
 public class FtpFileTransferClient extends AbstractFileTransferClient {
     private String hostname;
     private String username;
     private String password;
+    private Integer port;
 
     private FTPClient ftpClient;
 
-    public FtpFileTransferClient(String hostname, String username, String password) {
+    public FtpFileTransferClient(String hostname, String username, 
+    		String password, Integer port) {
         this.hostname = hostname;
         this.username = username;
         this.password = password;
+        this.port = port;
     }
 
     public boolean connect() {
         try {
             Log.i(TAG, "ftp connect to '" + username + "@" + hostname + "'");
-			// connect to ftp server
             ftpClient = new FTPClient();
-            ftpClient.connect(InetAddress.getByName(hostname));
+
+			// connect to ftp server
+            if(port == null) {
+            	ftpClient.connect(InetAddress.getByName(hostname));
+            } else {
+            	ftpClient.connect(InetAddress.getByName(hostname), port);
+            }
+            
             if(!ftpClient.login(username, password)) {
-                Log.e(TAG, "ftp login failed for'" + username + "@" + hostname + "'");
+                Log.e(TAG, "ftp login failed for'" + 
+                		username + "@" + hostname + "'");
                 return false;
             }
 
@@ -56,12 +64,13 @@ public class FtpFileTransferClient extends AbstractFileTransferClient {
         }
 
         try {
-            if(currentWorkingDirectory != dirPath) {
+            if(currentWorkingDirectory != dirPath &&((currentWorkingDirectory == null || dirPath == null)
+                    || (currentWorkingDirectory.equals(dirPath) == false))) {
                 if(dirPath == null) {
                    dirPath = "";
                 }
 
-                if(ftpClient.changeWorkingDirectory(dirPath)) {
+                if(cwd(dirPath)) {
                     currentWorkingDirectory = dirPath;
                 } else {
                     if(!createFolderStructure(dirPath)) {

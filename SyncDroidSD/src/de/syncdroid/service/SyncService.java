@@ -16,7 +16,6 @@ import com.google.inject.Inject;
 import de.syncdroid.GuiceService;
 import de.syncdroid.SyncBroadcastReceiver;
 import de.syncdroid.db.model.Profile;
-import de.syncdroid.db.model.ProfileType;
 import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
 import de.syncdroid.work.OneWayCopyJob;
