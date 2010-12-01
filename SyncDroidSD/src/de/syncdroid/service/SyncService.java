@@ -64,7 +64,12 @@ public class SyncService extends GuiceService {
 				PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
 				mgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
 						SystemClock.elapsedRealtime(), POLL_INTERVALL, pi);
-
+				
+				if (thread != null && thread.isAlive()) {
+					Log.w(TAG, "WARNING: TIMER_TICKET while running syncIt");
+				} else {
+					syncIt();
+				}
 			}
 		} else {
 			Log.d(TAG, "unknown intent:");

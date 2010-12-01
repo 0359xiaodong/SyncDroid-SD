@@ -28,6 +28,8 @@ import de.syncdroid.transfer.impl.SmbFileTransferClient;
 
 public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 	private static final String TAG = "FtpCopyJob";
+	
+	private SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
 
 	public OneWayCopyJob(Context context, Profile profile,
                          ProfileService profileService, LocationService locatonService) {
@@ -58,7 +60,7 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 				notification.setLatestEventInfo(context,
 						"upload in progress", msg, contentIntent);
 				notificationManager.notify(R.string.remote_service_started, notification);
-
+				
 				if(!fileTransferClient.transfer(item.source, Utils.combinePath(item.fullpath, item.name))) {
                     updateStatus("error transfering file", ProfileStatusLevel.ERROR, item.fullpath);
                     Log.e(TAG, "error transfering file '" + item.fullpath + "'");
@@ -116,7 +118,13 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 			if (profile.getLastSync() != null 
 					&& rootRemote.newest <= profile.getLastSync().getTime()) {
 				Log.d(TAG, "nothing to do");
-				//updateStatus("nothing to do", ProfileStatusLevel.SUCCESS, "");
+
+				String msg = "last successful sync was at " 
+						+ timeFormatter.format(profile.getLastSync());
+				
+				Log.d(TAG, msg);
+				
+				updateStatus("up-to-update", ProfileStatusLevel.SUCCESS, msg);
 				return;
 			}
 
@@ -200,9 +208,8 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 			Long transferTimeSeconds = (transferFinish - transferBegin) / 1000;
 			
 			Date now = new Date();
-			SimpleDateFormat format = new SimpleDateFormat("HH:mm");
 			
-			String msg = "finished at " + format.format(now) + ". uploaded " 
+			String msg = "finished at " + timeFormatter.format(now) + ". uploaded " 
 				+ transferedFiles + "/" 
 				+ filesToTransfer + " in " + transferTimeSeconds + " seconds";
 			Log.d(TAG, msg);
