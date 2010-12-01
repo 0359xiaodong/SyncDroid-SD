@@ -283,8 +283,10 @@ public class ProfileEditActivity extends AbstractActivity  {
 		profile.setName(txtProfileName.getText().toString());
 		profile.setLocalPath(txtLocalPath.getText().toString());
 		profile.setHostname(txtHostname.getText().toString());
-		profile.setUsername(txtUsername.getText().toString());
-		profile.setPassword(txtPassword.getText().toString());
+		
+		
+		
+		
 		profile.setRemotePath(txtRemotePath.getText().toString());
 		profile.setOnlyIfWifi(chkOnlyIfWifi.isChecked());
 		profile.setEnabled(chkEnabled.isChecked());
@@ -300,6 +302,16 @@ public class ProfileEditActivity extends AbstractActivity  {
             spnProfileTypeList.getSelectedItem();
 
         profile.setProfileType(profileType);
+        
+
+		if(profileType == ProfileType.DROPBOX) {
+			profile.setUsername("");
+			profile.setPassword("");
+		} else {
+			profile.setUsername(txtUsername.getText().toString());
+			profile.setPassword(txtPassword.getText().toString());
+			
+		}
 
         SyncType syncType = (SyncType)
             spnSyncTypeList.getSelectedItem();
