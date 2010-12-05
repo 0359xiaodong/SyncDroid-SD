@@ -23,18 +23,21 @@ public class DropboxFileTransferClient extends AbstractFileTransferClient  {
     final static public String ACCESS_KEY_NAME = "ACCESS_KEY";
     final static public String ACCESS_SECRET_NAME = "ACCESS_SECRET";
 
-    private static Context context;
+    private Context context;
 
-    private static DropboxAPI api = new DropboxAPI();
-    private static Config mConfig;
+    private DropboxAPI api = new DropboxAPI();
+    private Config mConfig;
 
+    public DropboxFileTransferClient(Context context) {
+		this.context = context;
+	}
 
-    public static boolean isAuthenticated() {
+    public boolean isAuthenticated() {
         Log.i(TAG, "dropbox isAuthenticated called");
         return getKeys() != null;
     }
 
-    public static boolean authenticate(String username, String password) {
+    public boolean authenticate(String username, String password) {
         Log.i(TAG, "dropbox authenticate called");
         mConfig = api.authenticate(getConfig(),
                 username, password);
@@ -125,7 +128,7 @@ public class DropboxFileTransferClient extends AbstractFileTransferClient  {
         throw new RuntimeException("not implemented!");
     }
 
-    protected static Config getConfig() {
+    protected Config getConfig() {
     	if (mConfig == null) {
 	    	mConfig = api.getConfig(null, false);
 
@@ -150,7 +153,7 @@ public class DropboxFileTransferClient extends AbstractFileTransferClient  {
     	return mConfig;
     }
     
-    public static void setConfig(Config conf) {
+    public void setConfig(Config conf) {
     	mConfig = conf;
     }
 	
@@ -161,7 +164,7 @@ public class DropboxFileTransferClient extends AbstractFileTransferClient  {
      * 
      * @return Array of [access_key, access_secret], or null if none stored
      */
-    public static String[] getKeys() {
+    public String[] getKeys() {
         SharedPreferences prefs = 
         	context.getSharedPreferences(ACCOUNT_PREFS_NAME, 0);
         
@@ -182,7 +185,7 @@ public class DropboxFileTransferClient extends AbstractFileTransferClient  {
      * store, rather than storing user name & password, and re-authenticating each
      * time (which is not to be done, ever).
      */
-    public static void storeKeys(String key, String secret) {
+    public void storeKeys(String key, String secret) {
         // Save the access key for later
         SharedPreferences prefs = context.getSharedPreferences(
         		ACCOUNT_PREFS_NAME, 0);
@@ -192,14 +195,11 @@ public class DropboxFileTransferClient extends AbstractFileTransferClient  {
         edit.commit();
     }
     
-    public static void clearKeys() {
+    public void clearKeys() {
         SharedPreferences prefs = context.getSharedPreferences(
         		ACCOUNT_PREFS_NAME, 0);
         Editor edit = prefs.edit();
         edit.clear();
         edit.commit();
     }
-
-    public static void setContext(Context context) {
-		DropboxFileTransferClient.context = context;
-	}}
+}

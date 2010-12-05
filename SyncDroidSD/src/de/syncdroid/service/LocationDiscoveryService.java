@@ -17,15 +17,17 @@ import de.syncdroid.SyncBroadcastReceiver;
 import de.syncdroid.activity.LocationEditActivity;
 
 public class LocationDiscoveryService extends Service {
-	private static final String TAG = "LocationDiscoveryService";
+	private static final String TAG = "SyncDroid.LocationDiscoveryService";
 	private static final int POLL_INTERVALL = 5000;
 	
-	public static final String TIMER_TICK = "de.syncdroid.TIMER_TICK";
-	public static final String INTENT_START_TIMER = "de.syncdroid.INTENT_START_TIMER";
-	public static final String INTENT_COLLECT_CELL_IDS = "de.syncdroid.COLLECT_CELL_IDS";
-	public static final String ACTION_CELL_CHANGED = "de.syncdroid.ACTION_CELL_CHANGED";
+	public static final String ACTION_TIMER_TICK               = "de.syncdroid.ACTION_TIMER_TICK";
+	public static final String ACTION_COLLECT_CELL_IDS         = "de.syncdroid.ACTION_COLLECT_CELL_IDS";
+	public static final String ACTION_STOP_COLLECTING_CELL_IDS = "de.syncdroid.ACTION_STOP_COLLECTING_CELL_IDS";
+	public static final String ACTION_CELL_CHANGED             = "de.syncdroid.ACTION_CELL_CHANGED";
 	
 	private GsmCellLocation currentCellLocation = null;
+
+    private PendingIntent pendingIntent;
 
     /**
      * Command to service to set a new value.  This can be sent to the
@@ -35,7 +37,6 @@ public class LocationDiscoveryService extends Service {
     public static final int FOUND_NEW_CELL = 3;
     
     private void sendCellLocation() {
-
 		TelephonyManager tm = (TelephonyManager) 
 				getSystemService(Activity.TELEPHONY_SERVICE); 
         GsmCellLocation location = (GsmCellLocation) tm.getCellLocation();
@@ -61,12 +62,11 @@ public class LocationDiscoveryService extends Service {
 		// handle intents
 		if( intent != null && intent.getAction() != null ) 
 		{
-			if( intent.getAction().equals(TIMER_TICK)  )
+			if( intent.getAction().equals(ACTION_TIMER_TICK)  )
 			{
-				Log.d(TAG, "TIMER_TICK");
+				Log.d(TAG, "ACTION_TIMER_TICK");
 				
-
-				TelephonyManager tm = (TelephonyManager) 
+				TelephonyManager tm = (TelephonyManager)
 						getSystemService(Activity.TELEPHONY_SERVICE); 
 		        GsmCellLocation location = (GsmCellLocation) tm.getCellLocation();
 		        
@@ -78,30 +78,32 @@ public class LocationDiscoveryService extends Service {
 		        }
 		        
 			}
-			else if(intent.getAction().equals(INTENT_START_TIMER) ||
-				intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED))
+			else if(intent.getAction().equals(ACTION_COLLECT_CELL_IDS))
 			{
-				Log.d(TAG, "set timer");
+				Log.d(TAG, "enable location timer");
 				AlarmManager mgr=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
 				Intent i=new Intent(this, SyncBroadcastReceiver.class);
-				i.setAction(TIMER_TICK);
-				
+				i.setAction(ACTION_TIMER_TICK);
+
 				// get a Calendar object with current time
 				Calendar cal = Calendar.getInstance();
 				cal.add(Calendar.SECOND, 4);
 
-				PendingIntent pi=PendingIntent.getBroadcast(this, 0, i, 0);
-				mgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 
-						SystemClock.elapsedRealtime(), POLL_INTERVALL, pi);
-
-			}
-			else if(intent.getAction().equals(INTENT_COLLECT_CELL_IDS))
-			{
+				pendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
+				mgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+						SystemClock.elapsedRealtime(), POLL_INTERVALL, pendingIntent);
 				sendCellLocation();
+			}
+			else if(intent.getAction().equals(ACTION_STOP_COLLECTING_CELL_IDS))
+			{
+				Log.d(TAG, "disable location timer");
+				AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                mgr.cancel(pendingIntent);
+			}
+			else if(intent.getAction().equals(ACTION_COLLECT_CELL_IDS))
+			{
 			} else {
-				Log.d(TAG, "unknown intent:");
-				Log.d(TAG, "Receive intent= " + intent );
-				Log.d(TAG, "action= " + intent.getAction() );
+				Log.w(TAG, "unknown intent with action '" + intent.getAction() + "': " + intent);
 			}
 		}
     }

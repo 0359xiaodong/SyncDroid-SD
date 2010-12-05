@@ -1,10 +1,14 @@
 package de.syncdroid.activity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.syncdroid.ProfileStatusLevel;
+import android.widget.*;
+import de.syncdroid.db.model.ProfileStatusLog;
+import de.syncdroid.db.model.enums.ProfileStatusLevel;
+import de.syncdroid.db.service.ProfileStatusLogService;
 import roboguice.inject.InjectView;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,10 +24,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.inject.Inject;
 
@@ -35,27 +35,20 @@ import de.syncdroid.service.SyncService;
 import de.syncdroid.work.OneWayCopyJob;
 
 public class ProfileListActivity extends AbstractActivity {
-	static final String TAG = "ProfileListActivity";
+	static final String TAG = "SyncDroid.ProfileListActivity";
 	
 	@Inject private ProfileService profileService;
+	@Inject private ProfileStatusLogService profileStatusLogService;
+
 	@InjectView(R.id.ListView01)             ListView lstProfiles;
 	@InjectView(R.id.txtProfileCount)		 TextView txtProfilesCount;
-	
+	@InjectView(R.id.btnForceCheck)          Button btnForceCheck;
+
 	private Profile currentlyLongClickedProfile = null;
 
-    private class ProfileStatus {
-        String message;
-        String detailMessage;
-        ProfileStatusLevel level;
+    private List<Profile> profiles = new ArrayList<Profile>();
 
-        public ProfileStatus(String message, String detailMessage, ProfileStatusLevel level) {
-            this.message = message;
-            this.detailMessage = detailMessage;
-            this.level = level;
-        }
-    }
-
-	private Map<Long, ProfileStatus> profileStatusById = new HashMap<Long, ProfileStatus>();
+	private Map<Long, ProfileStatusLog> profileStatusById = new HashMap<Long, ProfileStatusLog>();
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,10 +57,8 @@ public class ProfileListActivity extends AbstractActivity {
         setContentView(R.layout.profile_list_activity);
         
 		Intent myIntent = new Intent(this, SyncService.class);
-		myIntent.setAction(SyncService.INTENT_START_TIMER);
+		myIntent.setAction(SyncService.ACTION_START_TIMER);
 		startService(myIntent);
-		
-		dumpProfiles();
 		updateProfileList();        
 
 		
@@ -91,6 +82,15 @@ public class ProfileListActivity extends AbstractActivity {
 						currentlyLongClickedProfile.getId());
 				return false;
 			}
+        });
+
+        btnForceCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(ProfileListActivity.this, SyncService.class);
+                myIntent.setAction(SyncService.ACTION_TIMER_TICK);
+                startService(myIntent);
+            }
         });
         
         registerForContextMenu(lstProfiles);
@@ -148,10 +148,18 @@ public class ProfileListActivity extends AbstractActivity {
 		this.registerReceiver(this.receiver, filter);
 
 		updateProfileList();
+
+        for(Profile profile : profiles) {
+            ProfileStatusLog statusLog =
+                    profileStatusLogService.findLatestByProfile(profile);
+
+            profileStatusById.clear();
+            profileStatusById.put(profile.getId(), statusLog);
+        }
 	}
 	
 	private void updateProfileList() {
-		List<Profile> profiles = profileService.list();
+		profiles = profileService.list();
 		
 		ProfileListAdapter adapter = new ProfileListAdapter(this, 
                 R.layout.profile_listitem, R.id.TextView01, 
@@ -164,21 +172,8 @@ public class ProfileListActivity extends AbstractActivity {
         Log.d(TAG, "onPause()");
         super.onPause();
         this.unregisterReceiver(this.receiver);
-
-        dumpProfiles();
     }
-    
-	private void dumpProfiles() {
-		List<Profile> profiles = profileService.list();
-		
-		Log.i(TAG, "-------- Profile DUMP ---------");
-		for(Profile profile : profiles) {
-			Log.i(TAG, "profile #" + profile.getId() + ": " 
-					+ profile.getName());
-		}
-		Log.i(TAG, "-------------------------------");
-	}
-	
+
 	public void onButtonAddProfileClick(View view) {
         Log.d(TAG, "onButtonSyncItClick()");
         
@@ -198,12 +193,23 @@ public class ProfileListActivity extends AbstractActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
     	Log.d(TAG, "onOptionsItemSelected()");
+
+        Intent intent;
+
 		switch (item.getItemId()) {
-		// We have only one menu option
 		case R.id.item01:
-			Intent intent = new Intent(this, LocationListActivity.class);
+			intent = new Intent(this, LocationListActivity.class);
 			startActivity(intent);
 			break;
+        case R.id.item02:
+            intent = new Intent(this, LogViewActivity.class);
+            startActivity(intent);
+            break;
+        case R.id.item03:
+            intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            break;
+
 			
 		default:
 			Log.d(TAG, "unknown menu");
@@ -246,7 +252,7 @@ public class ProfileListActivity extends AbstractActivity {
 
 			final String UNKNOWN = "unknown";
 
-            ProfileStatus profileStatus = null;
+            ProfileStatusLog profileStatus = null;
 			if(profileStatusById.get(p.getId()) != null) {
                 profileStatus = profileStatusById.get(p.getId());
 			}
@@ -256,14 +262,13 @@ public class ProfileListActivity extends AbstractActivity {
             ProfileStatusLevel level = ProfileStatusLevel.INFO;
 
             if(profileStatus != null) {
-                level = profileStatus.level;
-                text = profileStatus.message;
-                detailMessage = profileStatus.detailMessage;
+                level = profileStatus.getStatusLevel();
+                text = profileStatus.getShortMessage();
+                detailMessage = profileStatus.getDetailMessage();
             }
 
-			label = (TextView) row.findViewById(R.id.txtProfileStatus);
-			label.setText(text);
-
+            label = (TextView) row.findViewById(R.id.txtProfileStatus);
+            label.setText(text);
 
             switch (level) {
                 case INFO:
@@ -291,17 +296,11 @@ public class ProfileListActivity extends AbstractActivity {
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Long id = intent.getExtras().getLong(EXTRA_ID);
-        	String msg = intent.getExtras().getString(EXTRA_MESSAGE);
-            String detailMsg = intent.getExtras().getString(EXTRA_DETAILMESSAGE);
-            ProfileStatusLevel level = ProfileStatusLevel.valueOf(intent.getExtras().getString(EXTRA_LEVEL));
-			Log.d(TAG, "onReceive() : " + msg);
-        	profileStatusById.put(id, new ProfileStatus(msg, detailMsg, level));
-        	//lstProfiles.invalidate();
+        	ProfileStatusLog log = (ProfileStatusLog) intent.getSerializableExtra(EXTRA_PROFILE_UPDATE);
+            Long id = log.getProfile().getId();
+
+            profileStatusById.put(id, log);
         	lstProfiles.invalidateViews();
 		}
- 
      };
-
-
 }

@@ -64,5 +64,20 @@ ADD COLUMN enabled BOOLEAN;
 ALTER TABLE profiles 
 ADD COLUMN port INTEGER;
 </string>
- 
+
+<string name="update005">
+CREATE TABLE profile_status_logs (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	short_message VARCHAR(255),
+	detail_message VARCHAR(512),
+	local_file_path VARCHAR(512),
+	profile_status_type VARCHAR(100),
+	profile_status_level VARCHAR(100),
+	profile_id INTEGER,
+	timestamp DATETIME
+)
+</string>
+
+
+
 </resources>

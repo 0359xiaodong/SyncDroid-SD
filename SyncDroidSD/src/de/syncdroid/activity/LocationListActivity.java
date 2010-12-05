@@ -25,7 +25,7 @@ import de.syncdroid.db.service.LocationService;
 import de.syncdroid.service.SyncService;
 
 public class LocationListActivity extends AbstractActivity {
-	static final String TAG = "LocationListActivity";
+	static final String TAG = "SyncDroid.LocationListActivity";
 	
 	@Inject private LocationService locationService;
 	@InjectView(R.id.ListView01)             ListView lstLocations;
@@ -39,7 +39,7 @@ public class LocationListActivity extends AbstractActivity {
         setContentView(R.layout.location_list_activity);
         
 		Intent myIntent = new Intent(this, SyncService.class);
-		myIntent.setAction(SyncService.INTENT_START_TIMER);
+		myIntent.setAction(SyncService.ACTION_START_TIMER);
 		startService(myIntent);
 		
 		dumpLocations();
@@ -117,7 +117,7 @@ public class LocationListActivity extends AbstractActivity {
         super.onResume();
 
 		Intent myIntent = new Intent(this, SyncService.class);
-		myIntent.setAction(SyncService.INTENT_START_TIMER);
+		myIntent.setAction(SyncService.ACTION_START_TIMER);
 		startService(myIntent);
 
 		updateLocationList();
@@ -162,13 +162,15 @@ public class LocationListActivity extends AbstractActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
     	Log.d(TAG, "onOptionsItemSelected()");
+        Intent intent;
+
 		switch (item.getItemId()) {
 		// We have only one menu option
 		case R.id.item01:
-			Intent intent = new Intent(this, LocationListActivity.class);
+			intent = new Intent(this, LocationListActivity.class);
 			startActivity(intent);
 			break;
-			
+
 		default:
 			Log.d(TAG, "unknown menu");
 			return super.onOptionsItemSelected(item);

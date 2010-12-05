@@ -8,14 +8,26 @@
   
 <Button android:id="@+id/Button01" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="@string/save" android:onClick="onSaveClick"></Button>
 
+<TextView android:id="@+id/TextView01" android:layout_width="wrap_content"
+android:layout_height="wrap_content" android:text="@string/location_name"></TextView>
 <EditText android:text="@+id/EditText01" android:id="@+id/EditText01" android:layout_height="wrap_content" android:layout_width="fill_parent"></EditText>
 
 
 <ListView android:id="@+id/ListView01" android:layout_width="fill_parent" android:layout_height="wrap_content"
     android:layout_weight="1"
 	></ListView>
-  
 
+
+<LinearLayout android:id="@+id/HostPortWrapper" android:orientation="horizontal"
+        android:layout_height="wrap_content" android:layout_width="fill_parent">
+
+<Button android:id="@+id/btnStartStopScan" android:layout_height="wrap_content" android:layout_width="wrap_content"
+        android:text="@string/begin_scan"></Button>
+
+<Button android:id="@+id/btnClearList" android:layout_height="wrap_content" android:layout_width="wrap_content"
+        android:text="@string/clear_list"></Button>
+
+</LinearLayout>
 
 
 </LinearLayout>

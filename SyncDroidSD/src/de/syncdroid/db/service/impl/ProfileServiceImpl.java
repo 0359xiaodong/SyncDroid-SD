@@ -8,12 +8,12 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
 import de.syncdroid.db.model.Profile;
-import de.syncdroid.db.model.ProfileType;
+import de.syncdroid.db.model.enums.ProfileType;
 import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
 
 public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements ProfileService {
-	private static final String TAG = "ProfileServiceImpl";
+	private static final String TAG = "SyncDroid.ProfileServiceImpl";
 	@Inject private LocationService locationService;
 	
 	protected String getTableName() {
@@ -29,7 +29,8 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 		
 		obj.setName(cursor.getString(cursor.getColumnIndex("name")));
 		obj.setId(cursor.getLong(cursor.getColumnIndex("id")));
-		String dateString = 
+
+		String dateString =
 			cursor.getString(cursor.getColumnIndex("lastSync"));
 		try {
 			if(dateString != null && "".equals(dateString) == false) {
@@ -48,7 +49,7 @@ public class ProfileServiceImpl extends AbstractServiceImpl<Profile> implements 
 		obj.setRemotePath(cursor.getString(cursor.getColumnIndex("remotePath")));
 		
 		obj.setProfileType(ProfileType.getByCode(
-				cursor.getString(cursor.getColumnIndex("profile_type"))));
+                cursor.getString(cursor.getColumnIndex("profile_type"))));
 		obj.setPort(cursor.getInt(cursor.getColumnIndex("port")));
 		
 

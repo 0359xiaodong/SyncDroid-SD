@@ -1,5 +1,8 @@
 package de.syncdroid.db.model;
 
+import de.syncdroid.db.model.enums.ProfileType;
+import de.syncdroid.db.model.enums.SyncType;
+
 import java.util.Date;
 
 public class Profile implements Model {

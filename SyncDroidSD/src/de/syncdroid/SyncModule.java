@@ -1,5 +1,7 @@
 package de.syncdroid;
 
+import de.syncdroid.db.service.ProfileStatusLogService;
+import de.syncdroid.db.service.impl.ProfileStatusLogServiceImpl;
 import roboguice.config.AbstractAndroidModule;
 import android.content.Context;
 import de.syncdroid.db.service.LocationCellService;
@@ -21,7 +23,8 @@ public class SyncModule extends AbstractAndroidModule {
         bind(ProfileService.class).to(ProfileServiceImpl.class);     
         bind(LocationService.class).to(LocationServiceImpl.class);  
         bind(LocationCellService.class).to(LocationCellServiceImpl.class);
-        
+        bind(ProfileStatusLogService.class).to(ProfileStatusLogServiceImpl.class);
+
         DatabaseHelper helper = new DatabaseHelper(context);
         bind(DatabaseHelper.class).toInstance(helper);
     }

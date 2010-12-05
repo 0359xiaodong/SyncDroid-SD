@@ -8,11 +8,10 @@ import android.content.Intent;
 import android.util.Log;
 
 public class SyncBroadcastReceiver extends BroadcastReceiver {
-	private static final String TAG = "SyncBroadcastReceiver";
+	private static final String TAG = "SyncDroid.SyncBroadcastReceiver";
 
 	public void onReceive(Context context, Intent intent ) {
-		Log.d(TAG, "Receive intent= " + intent );
-		Log.d(TAG, "action= " + intent.getAction() );
+		Log.d(TAG, "Received intent= " + intent + " with action '" + intent.getAction() + "'");
 		
 		Class<?>[] services = {
 				SyncService.class, 

@@ -5,7 +5,7 @@
       android:versionName="1.0">
     <application android:icon="@drawable/icon" 
     			 android:label="@string/app_name"
-    			 android:name="de.syncdroid.SyncApplication" android:debuggable="true">
+    			 android:name="de.syncdroid.SyncApplication" android:debuggable="false">
         <activity android:name="de.syncdroid.activity.ProfileListActivity"
                   android:label="@string/app_name">
             <intent-filter>
@@ -13,10 +13,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="de.syncdroid.activity.ProfileEditActivity" android:label="@string/app_name"></activity>
+        <activity android:name="de.syncdroid.activity.ProfileEditActivity"></activity>
         <activity android:name="de.syncdroid.activity.LocationEditActivity" android:label="@string/app_name"></activity>
         <activity android:name="de.syncdroid.activity.LocationListActivity" android:label="@string/app_name"></activity>
-        
+        <activity android:name="de.syncdroid.activity.LogViewActivity" android:label="@string/app_name"></activity>
+        <activity android:name="de.syncdroid.activity.SettingsActivity" android:label="@string/app_name"></activity>
+
     	<service android:name="de.syncdroid.service.SyncService"/>
     	<service android:name="de.syncdroid.service.LocationDiscoveryService"/>
     	
@@ -25,29 +27,36 @@
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="android.intent.action.ACTION_BOOT_COMPLETED" />
             </intent-filter>
             <intent-filter>
-                <action android:name="de.syncdroid.service.SyncService" />
+                <action android:name="android.intent.action.ACTION_TIME_TICK" />
             </intent-filter>
             <intent-filter>
-                <action android:name="de.syncdroid.service.LocationDiscoveryService" />
+                <action android:name="android.intent.action.ACTION_SCREEN_ON" />
             </intent-filter>
             <intent-filter>
-                <action android:name="de.syncdroid.SyncBroadcastReceiver" />
+                <action android:name="android.intent.action.ACTION_SCREEN_OFF" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="de.syncdroid.ACTION_PROFILE_UPDATE" />
             </intent-filter>
         </receiver>
     </application>
     <uses-sdk android:minSdkVersion="4" />
 
-	
-    <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
+	<!--  used for connecting to remote servers -->
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+
+    <!--  used for accessing the filesystme -->
     <uses-permission android:name="android.permission.STORAGE"></uses-permission>
+
+    <!--  used for auto starting the application -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
+    
+    <!--  used for determining cell location -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+
+    <!--  used for determining wifi state -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
 </manifest> 

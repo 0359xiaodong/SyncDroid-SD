@@ -14,7 +14,7 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class AbstractFileTransferClient implements FileTransferClient {
-    protected static final String TAG = "FileTransferClient";
+    protected static final String TAG = "SyncDroid.FileTransferClient";
 
     abstract protected boolean mkdir(String name) throws IOException;
     abstract protected boolean cwd(String name) throws IOException;
@@ -23,27 +23,31 @@ public abstract class AbstractFileTransferClient implements FileTransferClient {
 
     protected boolean createFolderStructure(String dirPath) throws IOException {
         if(mkdir(dirPath)) {
-            Log.i(TAG, "created directory: " + Utils.combinePath(currentWorkingDirectory, dirPath));
+            Log.i(TAG, "created directory: '" + Utils.combinePath(
+            		currentWorkingDirectory, dirPath) + "'");
         } else {// if this fails we assume the directory does not exist. so we create it:
+        	Log.i(TAG, "creating folder structure for: '" + 
+        			Utils.combinePath(currentWorkingDirectory, dirPath) + "'");
+        	
             String remains = dirPath;
 
             // remains = /path/to/my/file
 
+            if(remains.startsWith("/")) {
+                Log.d(TAG, "detected / at beginning, cwd to /...");
+                cwd("/");
+                currentWorkingDirectory = "/";
+
+                remains = remains.substring(1);
+
+                if("".equals(remains)) {
+                    return true;
+                }
+            }
+
             while(remains != null) {
                 String parent;
                 String rest;
-
-                if(remains.startsWith("/")) {
-                    Log.d(TAG, "detected / at beginning, cwd to /...");
-                    cwd("/");
-                    currentWorkingDirectory = "/";
-
-                    remains = remains.substring(1);
-
-                    if("".equals(remains)) {
-                        break;
-                    }
-                }
 
                 if(remains.contains("/")){
                     parent = remains.substring(0, remains.indexOf('/'));
@@ -63,7 +67,8 @@ public abstract class AbstractFileTransferClient implements FileTransferClient {
 
                 if(cwd(parent)) {
                     remains = rest;
-                    currentWorkingDirectory = Utils.combinePath(currentWorkingDirectory, parent);
+                    currentWorkingDirectory = Utils.combinePath(
+                    		currentWorkingDirectory, parent);
                     Log.i(TAG, "cwd to : " + currentWorkingDirectory);
 
                 } else if(!mkdir(parent)) {
@@ -72,15 +77,17 @@ public abstract class AbstractFileTransferClient implements FileTransferClient {
 
                     return false;
                 } else {
-                    Log.i(TAG, "created directory: " + Utils.combinePath(currentWorkingDirectory,
-                            parent));
+                    Log.i(TAG, "created directory: " + Utils.combinePath(
+                    		currentWorkingDirectory, parent));
 
                     remains = rest;
                     if(!cwd(parent)) {
-                        Log.e(TAG, "could not change into newly created directory :-(");
+                        Log.e(TAG, "could not change into newly " +
+                        		"created directory :-(");
                         return false;
                     }
-                    currentWorkingDirectory = Utils.combinePath(currentWorkingDirectory, parent);
+                    currentWorkingDirectory = Utils.combinePath(
+                    		currentWorkingDirectory, parent);
                 }
             }
         }

@@ -13,11 +13,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
-import de.syncdroid.ProfileStatusLevel;
+import de.syncdroid.db.model.enums.ProfileStatusLevel;
 import de.syncdroid.R;
 import de.syncdroid.Utils;
 import de.syncdroid.activity.ProfileListActivity;
 import de.syncdroid.db.model.Profile;
+import de.syncdroid.db.model.enums.ProfileStatusType;
 import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
 import de.syncdroid.transfer.FileTransferClient;
@@ -28,6 +29,8 @@ import de.syncdroid.transfer.impl.SmbFileTransferClient;
 
 public class OneWayCopyJob extends AbstractCopyJob implements Runnable {	
 	private SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
+
+    private static final Integer MIN_FILE_AGE = 3000;
 
 	public OneWayCopyJob(Context context, Profile profile,
                          ProfileService profileService, LocationService locatonService) {
@@ -51,7 +54,9 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
                 String msg = "transfering file " + (transferedFiles+1) + "/" + filesToTransfer;
 				Log.d(TAG, msg);
 
-			    updateStatus(msg, ProfileStatusLevel.INFO, item.name);
+			    updateStatus(msg, ProfileStatusLevel.INFO, item.name, ProfileStatusType.FILE_COPIED,
+                        item.source.getAbsolutePath());
+
 				PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
 						new Intent(context, ProfileListActivity.class), 0);
 
@@ -73,6 +78,8 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 
 	public void run() {
 		Log.d(TAG, "lastSync: " + profile.getLastSync());
+
+		updateStatus("tick", ProfileStatusLevel.INFO, "");
 
 		if(profile.getEnabled() == false) {
 			updateStatus("disabled", ProfileStatusLevel.INFO, "");
@@ -125,6 +132,12 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 				updateStatus("up-to-update", ProfileStatusLevel.SUCCESS, msg);
 				return;
 			}
+
+            if(new Date().getTime() - rootRemote.newest < MIN_FILE_AGE) {
+                Log.w(TAG, "found file which was changed very recently " +
+                        "- aborting this tick");
+                return ;
+            }
 
 			notification = new Notification(R.drawable.icon, 
 					"upload started for '" + profile.getName() + "'",
@@ -182,7 +195,7 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 						domain, username, profile.getPassword());
 				break;
 			case DROPBOX: 
-				fileTransferClient = new DropboxFileTransferClient();
+				fileTransferClient = new DropboxFileTransferClient(context);
 				break;
             default:
 			    Log.e(TAG, "unsupported profile type: '" + profile.getProfileType().toString() + "'");

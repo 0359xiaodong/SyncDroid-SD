@@ -1,26 +1,24 @@
 package de.syncdroid.activity;
 
-import java.util.HashMap;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
-import de.syncdroid.ProfileStatusLevel;
+import android.content.*;
+import android.widget.Button;
+import de.syncdroid.db.model.ProfileStatusLog;
+import de.syncdroid.db.model.enums.ProfileStatusLevel;
 import roboguice.inject.InjectView;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,18 +27,24 @@ import com.google.inject.Inject;
 
 import de.syncdroid.AbstractActivity;
 import de.syncdroid.R;
-import de.syncdroid.db.model.Profile;
-import de.syncdroid.db.service.ProfileService;
-import de.syncdroid.service.SyncService;
+import de.syncdroid.db.service.ProfileStatusLogService;
 import de.syncdroid.work.OneWayCopyJob;
 
 public class LogViewActivity extends AbstractActivity {
-	static final String TAG = "ProfileListActivity";
+	static final String TAG = "SyncDroid.ProfileListActivity";
 	
 	@InjectView(R.id.ListView01)             ListView lstLogMessage;
 	@InjectView(R.id.txtProfileName)		 TextView txtProfilesName;
-	
-	@Inject private ProfileService profileService;
+	@InjectView(R.id.btnClearLogs)
+    Button btnClearLogs;
+
+	@Inject private ProfileStatusLogService profileStatusLogService;
+
+    private String lastShortMessage = null;
+    private String lastDetailMessage = null;
+
+	private List<ProfileStatusLog> profileStatusLogs = 
+		new ArrayList<ProfileStatusLog>();
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,16 @@ public class LogViewActivity extends AbstractActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.logview_activity);
 
+        btnClearLogs.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                profileStatusLogService.deleteAll();
+                profileStatusLogs.clear();
+                updateLogMessageList();
+            }
+        });
+        
+        profileStatusLogs.addAll(profileStatusLogService.list());
         updateLogMessageList();        
     }
 	
@@ -65,11 +79,11 @@ public class LogViewActivity extends AbstractActivity {
 	}
 	
 	private void updateLogMessageList() {
-		/*ProfileListAdapter adapter = new ProfileListAdapter(this, 
+		ProfileStatusLogListAdapter adapter = new ProfileStatusLogListAdapter(this,
                 R.layout.profile_listitem, R.id.TextView01, 
-                profiles.toArray(new Profile[]{}));
-        lstProfiles.setAdapter(adapter);        
-        txtProfilesCount.setText(String.valueOf(profiles.size()));*/
+                profileStatusLogs.toArray(new ProfileStatusLog[]{}));
+        lstLogMessage.setAdapter(adapter);
+        txtProfilesName.setText(String.valueOf(profileStatusLogs.size()));
 	}
 
     protected void onPause() {
@@ -104,13 +118,13 @@ public class LogViewActivity extends AbstractActivity {
 	}
 	
 
-	public class ProfileListAdapter extends ArrayAdapter<Profile> {
+	public class ProfileStatusLogListAdapter extends ArrayAdapter<ProfileStatusLog> {
 		private Context mContext;
-		private Profile[] mItems;
+		private ProfileStatusLog[] mItems;
 		
 		
-		public ProfileListAdapter(Context context, int resource,
-				int textViewResourceId, Profile[] objects) {
+		public ProfileStatusLogListAdapter(Context context, int resource,
+				int textViewResourceId, ProfileStatusLog[] objects) {
 			
 			super(context, resource, textViewResourceId, objects);
 			mContext = context;
@@ -126,53 +140,37 @@ public class LogViewActivity extends AbstractActivity {
 			}
 			
 			View row = inflater.inflate(R.layout.profile_listitem, null);
-			Profile p = mItems[position];
+			ProfileStatusLog p = mItems[position];
 			TextView label=(TextView)row.findViewById(R.id.txtProfileName);
-			
-			if(p.getName() != null) {
-				label.setText(p.getName());
-			} else {
-				label.setText("[empty label]");
-			}
 
-			final String UNKNOWN = "unknown";
 
-            /*
-			ProfileStatus profileStatus = null;
-			if(profileStatusById.get(p.getId()) != null) {
-                profileStatus = profileStatusById.get(p.getId());
-			}
-			*/
+            SimpleDateFormat dateFormat =
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-			String text = UNKNOWN;
-			String detailMessage = "";
-            ProfileStatusLevel level = ProfileStatusLevel.INFO;
+            label.setText(dateFormat.format(p.getTimestamp()));
 
-            /*
-            if(profileStatus != null) {
-                level = profileStatus.level;
-                text = profileStatus.message;
-                detailMessage = profileStatus.detailMessage;
-            }
-            */
+			String shortMessage = p.getShortMessage();
+			String detailMessage = p.getDetailMessage();
+            ProfileStatusLevel level = p.getStatusLevel();
 
 			label = (TextView) row.findViewById(R.id.txtProfileStatus);
-			label.setText(text);
+			label.setText(shortMessage);
 
-
-            switch (level) {
-                case INFO:
-                    label.setTextColor(mContext.getResources().getColor(R.color.white));
-                    break;
-                case WARN:
-                    label.setTextColor(mContext.getResources().getColor(R.color.yellow));
-                    break;
-                case ERROR:
-                    label.setTextColor(mContext.getResources().getColor(R.color.red));
-                    break;
-                case SUCCESS:
-                    label.setTextColor(mContext.getResources().getColor(R.color.green));
-                    break;
+            if(level != null) {
+                switch (level) {
+                    case INFO:
+                        label.setTextColor(mContext.getResources().getColor(R.color.white));
+                        break;
+                    case WARN:
+                        label.setTextColor(mContext.getResources().getColor(R.color.yellow));
+                        break;
+                    case ERROR:
+                        label.setTextColor(mContext.getResources().getColor(R.color.red));
+                        break;
+                    case SUCCESS:
+                        label.setTextColor(mContext.getResources().getColor(R.color.green));
+                        break;
+                }
             }
 
 			label = (TextView) row.findViewById(R.id.txtProfileStatusDetail);
@@ -185,16 +183,27 @@ public class LogViewActivity extends AbstractActivity {
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Long id = intent.getExtras().getLong(EXTRA_ID);
-        	String msg = intent.getExtras().getString(EXTRA_MESSAGE);
-            String detailMsg = intent.getExtras().getString(EXTRA_DETAILMESSAGE);
-            ProfileStatusLevel level = ProfileStatusLevel.valueOf(intent.getExtras().getString(EXTRA_LEVEL));
-			Log.d(TAG, "onReceive() : " + msg);
-			/*
-        	profileStatusById.put(id, new ProfileStatus(msg, detailMsg, level));
-        	//lstProfiles.invalidate();
-        	lstProfiles.invalidateViews();
-        	*/
+        	ProfileStatusLog log = (ProfileStatusLog) intent.getSerializableExtra(EXTRA_PROFILE_UPDATE);
+
+            if(log.getDetailMessage().equals(lastDetailMessage)
+                    && log.getShortMessage().equals(lastShortMessage)) {
+
+                Log.d(TAG, "ignoring duplicate message");
+            } else {
+                Log.d(TAG, "onReceive() : " + log.getShortMessage() + " [" + log.getDetailMessage() + "] @ " +
+                        log.getTimestamp());
+
+                profileStatusLogs.add(log);
+
+                Collections.sort(profileStatusLogs, new Comparator<ProfileStatusLog>() {
+                    @Override
+                    public int compare(ProfileStatusLog o1, ProfileStatusLog o2) {
+                        return (int) (o2.getTimestamp().getTime() - o1.getTimestamp().getTime());
+                    }
+                });
+
+                updateLogMessageList();
+            }
 		}
  
      };

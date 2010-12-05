@@ -2,6 +2,7 @@ package de.syncdroid.activity;
 
 import java.util.List;
 
+import android.widget.*;
 import roboguice.inject.InjectView;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,10 +11,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
 import com.google.inject.Inject;
 
@@ -27,16 +24,24 @@ import de.syncdroid.service.LocationDiscoveryService;
 
 
 public class LocationEditActivity extends AbstractActivity {
-	static final String TAG = "LocationActivity";
+	static final String TAG = "SyncDroid.LocationActivity";
 
 	static public final String EXTRA_CELL_LAC = "lac";
 	static public final String EXTRA_CELL_CID = "cid";
 
 	@InjectView(R.id.ListView01) private ListView lv1;
 	@InjectView(R.id.EditText01) 			 EditText txtName;
+	@InjectView(R.id.btnStartStopScan)       Button btnStartStopScan;
+	@InjectView(R.id.btnClearList)           Button btnClearList;
+
+
+
 	@Inject private LocationService locationService;
 	@Inject private LocationCellService locationCellService;
+
 	private Location location;
+
+    private boolean scanning = false;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,16 +65,74 @@ public class LocationEditActivity extends AbstractActivity {
         } else {
         	throw new RuntimeException("no action given to Activity");
         }
-        
-		Intent myIntent = new Intent(this, LocationDiscoveryService.class);
-		myIntent.setAction(LocationDiscoveryService.INTENT_COLLECT_CELL_IDS);
-		startService(myIntent);
+
+        btnStartStopScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(scanning) {
+                    disableScanning();
+                    btnStartStopScan.setText(R.string.begin_scan);
+                } else {
+                    enableScanning();
+                    btnStartStopScan.setText(R.string.end_scan);
+                }
+            }
+        });
+
+
+        btnClearList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                location.getLocationCells().clear();
+                updateLocationCellList();
+            }
+        });
 		
 		readFromDatabase();
-		
     }
-	 
-	@Override
+
+    private void updateLocationCellList() {
+        ListAdapter adapter = new ArrayAdapter<LocationCell>(LocationEditActivity.this,
+                android.R.layout.simple_list_item_1,
+                location.getLocationCells().toArray(new LocationCell[]{}));
+        lv1.setAdapter(adapter);
+        lv1.refreshDrawableState();
+    }
+
+    private void enableScanning() {
+        if(scanning == false) {
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(LocationDiscoveryService.ACTION_CELL_CHANGED);
+            this.registerReceiver(this.receiver, filter);
+
+            Intent myIntent = new Intent(this, LocationDiscoveryService.class);
+            myIntent.setAction(LocationDiscoveryService.ACTION_COLLECT_CELL_IDS);
+            startService(myIntent);
+
+            scanning = true;
+        }
+    }
+
+    private void disableScanning() {
+        if(scanning == true) {
+            this.unregisterReceiver(this.receiver);
+
+            Intent myIntent = new Intent(this, LocationDiscoveryService.class);
+            myIntent.setAction(LocationDiscoveryService.ACTION_STOP_COLLECTING_CELL_IDS);
+            startService(myIntent);
+
+            scanning = false;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        disableScanning();
+    }
+
+    @Override
 	protected void onResume() {
 		super.onResume();
 
@@ -85,10 +148,7 @@ public class LocationEditActivity extends AbstractActivity {
 	    	
 	    	readFromDatabase();
 		}
-        
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(LocationDiscoveryService.ACTION_CELL_CHANGED);
-		this.registerReceiver(this.receiver, filter);
+
 	}
 	
 	private void readFromDatabase() {
@@ -100,8 +160,11 @@ public class LocationEditActivity extends AbstractActivity {
 			return;
 		}
 		location.setName(txtName.getText().toString());
+
 		
 		if(location.getLocationCells() != null) {
+		    locationService.saveOrUpdate(location);
+
 			List<LocationCell> locationCells = 
 				locationCellService.findAllbyLocation(location);
 
@@ -119,26 +182,21 @@ public class LocationEditActivity extends AbstractActivity {
 					locationCellService.saveOrUpdate(cell);
 				}
 			}
-		}
-		
-		
-		
-		locationService.saveOrUpdate(location);
+		} else {
+		    locationService.saveOrUpdate(location);
+        }
 	}
 	
 	public void onSaveClick(View view) {
 		writeToDatabase();
+        disableScanning();
 		finish();
 	}
 	
 
 	private void addItem(LocationCell item) {
 		location.getLocationCells().add(0, item);
-		ListAdapter adapter = new ArrayAdapter<LocationCell>(this, 
-				android.R.layout.simple_list_item_1, 
-				location.getLocationCells().toArray(new LocationCell[]{}));
-		lv1.setAdapter(adapter);
-		lv1.refreshDrawableState();
+		updateLocationCellList();
 	}
 	
 

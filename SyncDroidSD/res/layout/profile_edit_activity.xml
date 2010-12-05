@@ -4,7 +4,9 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:keepScreenOn="false">
-<Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/ButtonSyncIt" android:drawingCacheQuality="high" android:onClick="onButtonSyncItClick" android:text="Save"></Button>
+<Button android:layout_height="wrap_content" android:layout_width="fill_parent"
+ android:id="@+id/ButtonSyncIt" android:drawingCacheQuality="high" 
+ android:onClick="onButtonSyncItClick" android:text="Save"></Button>
 <ScrollView
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent"
@@ -57,42 +59,87 @@ android:layout_width="fill_parent"></EditText>
     </LinearLayout>
 </LinearLayout>
 
-<TextView android:id="@+id/TextView01" android:layout_width="wrap_content" 
-android:layout_height="wrap_content" android:text="@string/local_directory"></TextView>
-<EditText android:id="@+id/EditText01" android:layout_height="wrap_content" 
-android:layout_width="fill_parent"></EditText>
+
+<LinearLayout android:id="@+id/LocalPathWrapper" 
+              android:layout_width="fill_parent" 
+              android:layout_height="wrap_content"
+              android:orientation="horizontal">
+              
+              
+    <LinearLayout 
+                  android:id="@+id/HostWrapper"
+                  android:orientation="vertical" 
+                  android:layout_weight="100"
+	              android:layout_height="wrap_content"
+                  android:layout_width="wrap_content">
+                  
+		<TextView android:id="@+id/TextView01" android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" android:text="@string/local_directory"></TextView>
+		
+		<EditText android:id="@+id/EditText01" android:layout_height="wrap_content" 
+		android:layout_width="fill_parent"></EditText>
+
+	</LinearLayout>
+	
+		    
+    <LinearLayout 
+                  android:id="@+id/HostWrapper"
+                  android:orientation="vertical" 
+                  android:layout_weight="1"
+	              android:layout_height="wrap_content"
+                  android:layout_width="wrap_content">
+                  
+		<TextView android:id="@+id/TextView01" android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" android:text=""></TextView>
+		
+		<Button android:layout_height="wrap_content" 
+	                  android:layout_weight="1" android:layout_width="wrap_content"
+		 android:id="@+id/btnOpenDirectory" android:drawingCacheQuality="high" 
+		 android:text="select"></Button>
+
+	</LinearLayout>
+	
+</LinearLayout>
+
 <TextView android:id="@+id/TextView05" android:layout_width="wrap_content" 
 android:layout_height="wrap_content" android:text="@string/remote_directory"></TextView>
 <EditText android:id="@+id/EditText05" android:layout_height="wrap_content" 
 android:layout_width="fill_parent"></EditText>
 
+<TextView android:id="@+id/TextView05" android:layout_width="wrap_content"
+android:layout_height="wrap_content" android:text="@string/remote_directory"></TextView>
 <LinearLayout android:id="@+id/HostPortWrapper" android:orientation="horizontal" 
         android:layout_height="wrap_content" android:layout_width="fill_parent">
-	<LinearLayout 
-	                 android:id="@+id/PortWrapper" 
-	                 android:orientation="vertical" 
-                     android:layout_height="wrap_content"
-	                 android:weightSum="1"
-	                 android:layout_marginRight="10px" android:layout_width="wrap_content">
-	                 
-	    <TextView android:id="@+id/TextView02" android:layout_width="wrap_content" 
-	    android:layout_height="wrap_content" android:text="@string/port" android:layout_marginRight="20px"></TextView>
-	   <EditText android:id="@+id/EditText07" android:layout_height="wrap_content" android:layout_width="fill_parent" android:clickable="true"></EditText>
-	       
-	</LinearLayout>
+
     <LinearLayout 
                   android:id="@+id/HostWrapper"
-                  android:weightSum="2"
                   android:orientation="vertical" 
-                  android:layout_height="wrap_content"
-                  android:layout_width="fill_parent">
+                  android:layout_weight="10"
+	              android:layout_height="wrap_content"
+                  android:layout_width="wrap_content">
                   
         <TextView android:id="@+id/TextView02" android:layout_width="wrap_content" 
         android:layout_height="wrap_content" android:text="@string/hostname"></TextView>
+      
         <EditText android:id="@+id/EditText02" android:layout_height="wrap_content" 
         android:layout_width="fill_parent"></EditText>
         
     </LinearLayout>
+  	<LinearLayout 
+                 android:id="@+id/PortWrapper" 
+                 android:orientation="vertical" 
+                 android:layout_weight="1"
+                 android:layout_marginRight="10px" 
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content">
+	                 
+	    <TextView android:id="@+id/TextView02" android:layout_width="wrap_content" 
+	    android:layout_height="wrap_content" android:text="@string/port" android:layout_marginRight="40px"></TextView>
+	   
+	   <EditText android:id="@+id/EditText07" android:layout_height="wrap_content" 
+	   android:layout_width="fill_parent" android:clickable="true"></EditText>
+	       
+	</LinearLayout>
 </LinearLayout>
 
 <LinearLayout android:id="@+id/UsernamePasswordWrapper" 
@@ -127,7 +174,7 @@ android:layout_width="fill_parent"></EditText>
               android:layout_height="wrap_content"
               android:orientation="vertical">
     <TextView android:id="@+id/TextView12" android:layout_width="wrap_content" 
-    android:layout_height="wrap_content" android:text="@string/authenticate_with_dropbox"></TextView>
+    android:layout_height="wrap_content" android:text="@string/clear_dropbox_auth"></TextView>
     
     <Button android:id="@+id/ClearDropboxAuth" android:layout_width="wrap_content"
      android:layout_height="wrap_content" android:text="@string/clear_dropbox_auth"></Button>

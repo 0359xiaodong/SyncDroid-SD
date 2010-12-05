@@ -1,4 +1,4 @@
-package de.syncdroid.db.model;
+package de.syncdroid.db.model.enums;
 
 public enum ProfileType {
 	FTP("FTP"),

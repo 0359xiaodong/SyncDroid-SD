@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="clear_logs">clear logs</string>
+    <string name="log_count">Log Count</string>
+    <string name="clear_logs">Clear Logs</string>
     <string name="authenticate_with_dropbox">Authenticate with Dropbox</string>
     <string name="port">Port</string>
     <string name="enabled">Enabled</string>
@@ -10,7 +11,7 @@
     <string name="username">Username</string>
     <string name="hostname">Hostname</string>
     <string name="profile_type">Profile Type</string>
-    <string name="view_log">view log</string>
+    <string name="view_log">View Log</string>
     <string name="any">Any</string>
     <string name="only_when_at_location">Only when at Location</string>
     <string name="delete_location">Delete Location</string>
@@ -39,5 +40,16 @@
 	<string name="remote_service_disconnected">Remote Service disconnected</string>
 	<string name="remote_service_label">Remote Service Label</string>
     <string name="sync_type">Synchronization Type</string>
-<string name="clear_dropbox_auth">Clear Dropbox Authentication Data</string>
+    <string name="clear_dropbox_auth">Clear Dropbox Authentication Data</string>
+    <string name="begin_scan">Begin Scan</string>
+    <string name="clear_list">Clear List</string>
+    <string name="end_scan">Stop Scan</string>
+    <string name="location_name">Location Name</string>
+    <string name="pref_updateInterval_title">Update Interval</string>
+    <string name="pref_updateInterval_summary">Interval in minutes in which the configured profiles are checked for changes.</string>
+    <string name="pref_onlyWhenScreenOn_title">Only when Screen on</string>
+    <string name="pref_onlyWhenScreenOn_summary">When checked, Profile checking only occurs if screen is on</string>
+    <string name="settings">Settings</string>
+    <string name="pref_updateInterval_default">5</string>
+    <string name="force_check">Check</string>
 </resources>

@@ -6,7 +6,7 @@
     >
 
 
-<Button android:id="@+id/Button01" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="@string/clear_logs"></Button>
+<Button android:id="@+id/btnClearLogs" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="@string/clear_logs"></Button>
 
 
 <ListView android:id="@+id/ListView01" android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
 	<TextView android:id="@+id/TextView01" 
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
 	    android:layout_weight="1"
-		android:textStyle="bold" android:text="@string/profile_name"></TextView>
+		android:textStyle="bold" android:text="@string/log_count"></TextView>
 	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
 		android:padding="5px"
 		android:textStyle="bold" android:id="@+id/txtProfileName"></TextView>

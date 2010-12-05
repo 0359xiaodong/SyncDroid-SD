@@ -8,9 +8,9 @@ import android.util.Log;
 import de.syncdroid.R;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-	private static final String TAG = "DatabaseHelper";
+	private static final String TAG = "SyncDroid.DatabaseHelper";
     private static final String DATABASE_NAME = "syncdroid.db";
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
     private Context mContext;
     
     public DatabaseHelper(Context context) {
@@ -54,6 +54,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		if (oldVersion < 6) {
 			Log.i(TAG, "update to version 6");
 			db.execSQL(res.getString(R.string.update004));
+		}
+		if (oldVersion < 7) {
+			Log.i(TAG, "update to version 7");
+			db.execSQL(res.getString(R.string.update005));
 		}
 		Log.i(TAG, "onUpgrade(), complete");
 	}

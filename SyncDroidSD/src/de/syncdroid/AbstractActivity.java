@@ -5,7 +5,5 @@ import roboguice.activity.GuiceActivity;
 public class AbstractActivity extends GuiceActivity {
 
 	public static final String EXTRA_ID = "id";
-	public static final String EXTRA_MESSAGE = "message";
-	public static final String EXTRA_LEVEL = "level";
-	public static final String EXTRA_DETAILMESSAGE = "detailMessage";
+    public static final String EXTRA_PROFILE_UPDATE = "profile_update";
 }

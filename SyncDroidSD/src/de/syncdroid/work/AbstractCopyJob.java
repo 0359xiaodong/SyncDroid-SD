@@ -10,16 +10,19 @@ import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import de.syncdroid.AbstractActivity;
-import de.syncdroid.ProfileStatusLevel;
+import de.syncdroid.db.model.ProfileStatusLog;
+import de.syncdroid.db.model.enums.ProfileStatusLevel;
 import de.syncdroid.Utils;
 import de.syncdroid.db.model.Location;
 import de.syncdroid.db.model.LocationCell;
 import de.syncdroid.db.model.Profile;
+import de.syncdroid.db.model.enums.ProfileStatusType;
 import de.syncdroid.db.service.LocationService;
 import de.syncdroid.db.service.ProfileService;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,7 +33,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class AbstractCopyJob {
-	protected static final String TAG = "CopyJob";
+	protected static final String TAG = "SyncDroid.CopyJob";
 
 	public static final String ACTION_PROFILE_UPDATE
 		= "de.syncdroid.ACTION_PROFILE_UPDATE";
@@ -110,16 +113,29 @@ public class AbstractCopyJob {
         return true;
     }
 
-	protected void updateStatus(String msg, ProfileStatusLevel level, String detailMessage) {
-		Log.d(TAG, "message: " + msg);
+	protected void updateStatus(String shortMessage, ProfileStatusLevel level, String detailMessage,
+                                ProfileStatusType profileStatusType, String filepath) {
+		Log.d(TAG, "message: " + shortMessage);
+
+        ProfileStatusLog log = new ProfileStatusLog();
+        log.setProfile(profile);
+        log.setShortMessage(shortMessage);
+        log.setStatusLevel(level);
+        log.setDetailMessage(detailMessage);
+        log.setProfileStatusType(profileStatusType);
+        log.setLocalFilePath(filepath);
+        log.setTimestamp(new Date());
+
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(ACTION_PROFILE_UPDATE);
-        broadcastIntent.putExtra(AbstractActivity.EXTRA_ID, profile.getId());
-        broadcastIntent.putExtra(AbstractActivity.EXTRA_MESSAGE, msg);
-        broadcastIntent.putExtra(AbstractActivity.EXTRA_LEVEL, level.toString());
-        broadcastIntent.putExtra(AbstractActivity.EXTRA_DETAILMESSAGE, detailMessage);
+        broadcastIntent.putExtra(AbstractActivity.EXTRA_PROFILE_UPDATE, log);
+
         this.context.sendBroadcast(broadcastIntent);
 	}
+
+	protected void updateStatus(String shortMessage, ProfileStatusLevel level, String detailMessage) {
+        updateStatus(shortMessage, level, detailMessage, null, null);
+    }
 
     protected RemoteFile buildTree(File dir, String fullpath, Long newerThan) {
         RemoteFile here = new RemoteFile();
