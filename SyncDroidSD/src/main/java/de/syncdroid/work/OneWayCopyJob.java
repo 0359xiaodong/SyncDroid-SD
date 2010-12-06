@@ -79,8 +79,6 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 	public void run() {
 		Log.d(TAG, "lastSync: " + profile.getLastSync());
 
-		updateStatus("tick", ProfileStatusLevel.INFO, "");
-
 		if(profile.getEnabled() == false) {
 			updateStatus("disabled", ProfileStatusLevel.INFO, "");
 			return;
@@ -89,6 +87,11 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
         if(testRunCondition() == false) {
             return;
         }
+
+		// The PendingIntent to launch our activity if the user selects this
+		// notification
+		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
+				new Intent(context, ProfileListActivity.class), 0);
 		
 		//updateStatus("checking for file status ...", ProfileStatusLevel.INFO, "");
 		
@@ -139,23 +142,23 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
                 return ;
             }
 
-			notification = new Notification(R.drawable.icon, 
+			notification = new Notification(R.drawable.progress, 
 					"upload started for '" + profile.getName() + "'",
 					System.currentTimeMillis());
 			
 
-			// The PendingIntent to launch our activity if the user selects this
-			// notification
-			PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-					new Intent(context, ProfileListActivity.class), 0);
 			notificationManager = 
-				(NotificationManager) context.getSystemService(Activity.NOTIFICATION_SERVICE);
+				(NotificationManager) context.getSystemService(
+						Activity.NOTIFICATION_SERVICE);
 
 			// Set the info for the views that show in the notification panel.
 			notification.setLatestEventInfo(context,
 					"upload started", "starting uploading ...", contentIntent);
+
+			updateStatus("upload started", ProfileStatusLevel.INFO, "");
 			
-			notificationManager.notify(R.string.remote_service_started, notification);
+			notificationManager.notify(R.string.remote_service_started, 
+					notification);
 			
 			Long transferBegin = System.currentTimeMillis();
 
@@ -229,9 +232,10 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 
 			notification.setLatestEventInfo(context,
 					"upload success", msg, contentIntent);
-			
-			notificationManager.notify(R.string.remote_service_started, notification);
-            notification.tickerText = msg;
+            notification.icon = R.drawable.success;
+            
+			notificationManager.notify(R.string.remote_service_started, 
+					notification);
 
             profile = profileService.findById(profile.getId());
 			profile.setLastSync(new Date());
@@ -243,6 +247,16 @@ public class OneWayCopyJob extends AbstractCopyJob implements Runnable {
 		} catch(Exception e) {
 			Log.e(TAG, "whoa, exception: ", e);
 			updateStatus("error", ProfileStatusLevel.ERROR, e.toString());
+			
+			
+			notification.setLatestEventInfo(context,
+					"upload failure", "exception catched", contentIntent);
+            notification.icon = R.drawable.error;
+            
+			notificationManager.notify(R.string.remote_service_started, 
+					notification);
+			
+            notification.icon = R.drawable.success;
 			
 			Toast.makeText(context, e.toString(), 2000).show();
 			return;
