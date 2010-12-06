@@ -18,11 +18,9 @@ public class Location implements Model {
 		return name;
 	}
 	
-	@Override
 	public Long getId() {
 		return id;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -44,7 +42,7 @@ public class Location implements Model {
 		hash = 31 * hash + (null == id ? 0 : id.hashCode());
 		return hash;
 	}	
-	@Override
+
 	public void setId(Long id) {
 		this.id = id;
 	}

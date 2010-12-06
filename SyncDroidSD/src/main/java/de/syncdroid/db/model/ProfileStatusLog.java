@@ -21,7 +21,6 @@ public class ProfileStatusLog implements Model {
 		return shortMessage;
 	}
 
-    @Override
     public Long getId() {
         return id;
     }
@@ -47,7 +46,6 @@ public class ProfileStatusLog implements Model {
 		return hash;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

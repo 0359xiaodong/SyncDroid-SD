@@ -93,7 +93,6 @@ public class ProfileEditActivity extends AbstractActivity  {
         switchToDefaultView();
         
         btnAuthenticateWithDropbox.setOnClickListener(new OnClickListener() {
-			@Override
 			public void onClick(View v) {
         		Log.i(TAG, "on dropbox authenticate button click");
 				String username = txtUsername.getText().toString();
@@ -119,7 +118,6 @@ public class ProfileEditActivity extends AbstractActivity  {
 		});
 
         btnOpenDirectory.setOnClickListener(new OnClickListener() {
-			@Override
 			public void onClick(View v) {
 				Log.i(TAG, "starting pick directory intent");
 
@@ -154,14 +152,12 @@ public class ProfileEditActivity extends AbstractActivity  {
 		});
         
         btnClearDropboxAuth.setOnClickListener(new OnClickListener() {
-        	@Override
         	public void onClick(View v) {
         		Log.i(TAG, "on clear dropbox authenticate button click");
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(ProfileEditActivity.this);
                 builder.setMessage(getResources().getString(R.string.clear_dropbox_auth) + "?");
                 builder.setPositiveButton(R.string.clear_dropbox_auth, new DialogInterface.OnClickListener() {
-                    @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         DropboxFileTransferClient dropboxFileTransferClient =
                             new DropboxFileTransferClient(ProfileEditActivity.this);
@@ -177,7 +173,6 @@ public class ProfileEditActivity extends AbstractActivity  {
         });
         
         spnProfileTypeList.setOnItemSelectedListener(new OnItemSelectedListener() {
-        	@Override
         	public void onItemSelected(AdapterView<?> parent, View view,
         			int position, long id) {
         		Log.i(TAG, "onProfileSelected");
@@ -210,11 +205,10 @@ public class ProfileEditActivity extends AbstractActivity  {
 				}
         	}
         	
-        	@Override
         	public void onNothingSelected(AdapterView<?> arg0) {
         		switchToDefaultView();
         	}
-		});        
+		});
         
         readFromDatabase();
     }

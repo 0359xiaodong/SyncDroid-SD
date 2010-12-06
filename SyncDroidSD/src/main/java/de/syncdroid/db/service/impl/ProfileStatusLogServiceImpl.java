@@ -113,7 +113,6 @@ public class ProfileStatusLogServiceImpl extends AbstractServiceImpl<ProfileStat
 		return "profile_status_logs";
 	}
 
-    @Override
     public ProfileStatusLog findLatestByProfile(Profile profile) {
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
         // (boolean distinct, String table, String[] columns, String selection,
@@ -137,7 +136,6 @@ public class ProfileStatusLogServiceImpl extends AbstractServiceImpl<ProfileStat
 		return obj;
     }
 
-    @Override
     public void deleteAll() {
 		SQLiteDatabase db = databaseHelper.getWritableDatabase();
 		db.delete(getTableName(), null, null);

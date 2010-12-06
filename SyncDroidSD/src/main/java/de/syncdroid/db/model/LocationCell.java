@@ -43,12 +43,10 @@ public class LocationCell implements Model {
 		return "[" + lac + ", " + cid + "]";
 	}
 	
-	@Override
 	public Long getId() {
 		return id;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

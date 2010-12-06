@@ -53,7 +53,6 @@ public class LogViewActivity extends AbstractActivity {
         setContentView(R.layout.logview_activity);
 
         btnClearLogs.setOnClickListener(new Button.OnClickListener() {
-            @Override
             public void onClick(View view) {
                 profileStatusLogService.deleteAll();
                 profileStatusLogs.clear();
@@ -196,7 +195,6 @@ public class LogViewActivity extends AbstractActivity {
                 profileStatusLogs.add(log);
 
                 Collections.sort(profileStatusLogs, new Comparator<ProfileStatusLog>() {
-                    @Override
                     public int compare(ProfileStatusLog o1, ProfileStatusLog o2) {
                         return (int) (o2.getTimestamp().getTime() - o1.getTimestamp().getTime());
                     }

@@ -8,6 +8,7 @@
 
     <packaging>apk</packaging>
     <name>SyncDroid SD</name>
+    
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,7 +20,7 @@
         <dependency>
             <groupId>com.google.android</groupId>
             <artifactId>android</artifactId>
-            <version>2.2.1</version>
+            <version>1.6_r2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -29,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
-            <artifactId>guice-aop</artifactId>
+            <artifactId>guice-noaop</artifactId>
             <version>2.0</version>
         </dependency>
         <dependency>
@@ -49,29 +50,42 @@
         </dependency>
         <dependency>
             <groupId>com.dropbox</groupId>
-            <artifactId>android-api</artifactId>
-            <version>0.1</version>
+            <artifactId>dropbox-client</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>syncdroid-maven</id>
+            <name>syncdroid maven</name>
+            <url>http://arturh85.github.com/SyncDroid-SD/maven2</url>
+        </repository>
+    </repositories>
+    
     <build>
-        <!-- This should be just the artifact identifier, no version on the APK file,
-             because this is what IntelliJ will use by default.
-        -->
-        <finalName>${project.artifactId}</finalName>
+        <finalName>SyncDroid</finalName>
         <plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>        
+        
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>maven-android-plugin</artifactId>
                 <version>2.6.0</version>
                 <configuration>
                     <sdk>
-
                         <!-- Don't forget to set your ANDROID_HOME environment variable to your SDK directory! -->
                         <path>${env.ANDROID_HOME}</path>
 
-                        <!-- Platform 8 is Android 2.2 -->
-                        <platform>8</platform>
+                        <!-- Platform 4 is Android 1.6 -->
+                        <platform>4</platform>
 
                     </sdk>
                     

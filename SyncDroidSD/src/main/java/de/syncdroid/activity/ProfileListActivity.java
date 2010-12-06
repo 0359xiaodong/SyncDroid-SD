@@ -85,7 +85,6 @@ public class ProfileListActivity extends AbstractActivity {
         });
 
         btnForceCheck.setOnClickListener(new View.OnClickListener() {
-            @Override
             public void onClick(View view) {
                 Intent myIntent = new Intent(ProfileListActivity.this, SyncService.class);
                 myIntent.setAction(SyncService.ACTION_TIMER_TICK);

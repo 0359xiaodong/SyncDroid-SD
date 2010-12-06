@@ -37,7 +37,6 @@ public class LocationCellServiceImpl extends AbstractServiceImpl<LocationCell> i
 		return "location_cells";
 	}
 
-	@Override
 	public List<LocationCell> findAllbyLocation(Location location) {
 		SQLiteDatabase db = databaseHelper.getReadableDatabase();
 		Cursor cursor = db.query(getTableName(), null, 
@@ -50,7 +49,6 @@ public class LocationCellServiceImpl extends AbstractServiceImpl<LocationCell> i
 		return lst;
 	}
 	
-	@Override
 	public List<LocationCell> findByCidAndLac(Integer cid, Integer lac) {
 		SQLiteDatabase db = databaseHelper.getReadableDatabase();
 		Cursor cursor = db.query(getTableName(), null, 

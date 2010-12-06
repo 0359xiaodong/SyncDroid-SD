@@ -67,7 +67,6 @@ public class LocationEditActivity extends AbstractActivity {
         }
 
         btnStartStopScan.setOnClickListener(new View.OnClickListener() {
-            @Override
             public void onClick(View view) {
                 if(scanning) {
                     disableScanning();
@@ -81,7 +80,6 @@ public class LocationEditActivity extends AbstractActivity {
 
 
         btnClearList.setOnClickListener(new View.OnClickListener() {
-            @Override
             public void onClick(View view) {
                 location.getLocationCells().clear();
                 updateLocationCellList();
