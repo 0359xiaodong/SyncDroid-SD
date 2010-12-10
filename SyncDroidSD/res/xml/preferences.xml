@@ -34,4 +34,11 @@
 		android:defaultValue="false"
 		/>
 
+	<CheckBoxPreference
+		android:key="wakeUpPhone"
+		android:title="@string/pref_wakeUpPhone_title"
+		android:summary="@string/pref_wakeUpPhone_summary"
+		android:defaultValue="false"
+		/>
+
 </PreferenceScreen>

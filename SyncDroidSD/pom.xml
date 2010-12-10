@@ -86,16 +86,15 @@
 
                         <!-- Platform 4 is Android 1.6 -->
                         <platform>4</platform>
-
                     </sdk>
                     
                     <!-- All of these go into the /src/main/android/ directory, we don't
                          want to polute the project root directory. -->
-                    <androidManifestFile>${project.basedir}/src/main/android/AndroidManifest.xml</androidManifestFile>
-                    <resourceDirectory>${project.basedir}/src/main/android/res</resourceDirectory>
-                    <assetsDirectory>${project.basedir}/src/main/android/assets</assetsDirectory>
-                    <nativeLibrariesDirectory>${project.basedir}/src/main/android/native</nativeLibrariesDirectory>
-                    <resourceOverlayDirectory>${project.basedir}/src/main/android/overlay</resourceOverlayDirectory>
+                    <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
+                    <resourceDirectory>${project.basedir}/res</resourceDirectory>
+                    <assetsDirectory>${project.basedir}/assets</assetsDirectory>
+                    <nativeLibrariesDirectory>${project.basedir}/native</nativeLibrariesDirectory>
+                    <resourceOverlayDirectory>${project.basedir}/overlay</resourceOverlayDirectory>
                     
                     <!-- Read the Android Maven plugin documentation about these settings -->
                     <deleteConflictingFiles>true</deleteConflictingFiles>

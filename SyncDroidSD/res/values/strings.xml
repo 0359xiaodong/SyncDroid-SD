@@ -49,6 +49,8 @@
     <string name="pref_updateInterval_summary">Interval in minutes in which the configured profiles are checked for changes.</string>
     <string name="pref_onlyWhenScreenOn_title">Only when Screen on</string>
     <string name="pref_onlyWhenScreenOn_summary">When checked, Profile checking only occurs if screen is on</string>
+    <string name="pref_wakeUpPhone_title">Wake up the phone</string>
+    <string name="pref_wakeUpPhone_summary">When checked, a sleeping phone will wake up to check for changes.</string>
     <string name="settings">Settings</string>
     <string name="pref_updateInterval_default">5</string>
     <string name="force_check">Check</string>

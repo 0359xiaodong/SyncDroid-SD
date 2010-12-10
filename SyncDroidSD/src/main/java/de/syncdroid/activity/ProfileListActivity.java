@@ -62,20 +62,26 @@ public class ProfileListActivity extends AbstractActivity {
 		updateProfileList();        
 
 		
-		lstProfiles.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			 public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+		lstProfiles.setOnItemClickListener(
+				new AdapterView.OnItemClickListener() {
+			 public void onItemClick(AdapterView<?> a, View v, 
+					 int position, long id) {
 				Profile profile = (Profile)lstProfiles.getItemAtPosition(position);
 				Log.d(TAG, "ProfileId: " + profile.getId());
 				
-				Intent myIntent = new Intent(ProfileListActivity.this, ProfileEditActivity.class);
+				Intent myIntent = new Intent(ProfileListActivity.this, 
+						ProfileEditActivity.class);
 				myIntent.putExtra(ProfileEditActivity.EXTRA_ID, profile.getId());
 				myIntent.setAction(Intent.ACTION_EDIT);
 				ProfileListActivity.this.startActivity(myIntent);
 			 }});
 
-		lstProfiles.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-			public boolean onItemLongClick(AdapterView<?> a, View v, int position, long id) {
+		lstProfiles.setOnItemLongClickListener(
+				new AdapterView.OnItemLongClickListener() {
+			public boolean onItemLongClick(AdapterView<?> a, View v, 
+					int position, long id) {
 		        Log.i(TAG, "OnItemLongClickListener()");
+		        
 		        currentlyLongClickedProfile = (Profile)
 		        	lstProfiles.getItemAtPosition(position);
 				Log.d(TAG, "OnItemLongClickListener(), ProfileId: " + 

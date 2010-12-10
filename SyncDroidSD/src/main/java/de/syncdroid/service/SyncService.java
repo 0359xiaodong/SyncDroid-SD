@@ -27,11 +27,15 @@ import de.syncdroid.work.OneWayCopyJob;
 public class SyncService extends GuiceService {
 	private static final String TAG = "SyncDroid.SyncService";
 
-	public static final String ACTION_TIMER_TICK  = "de.syncdroid.ACTION_TIMER_TICK";
-	public static final String ACTION_START_TIMER = "de.syncdroid.ACTION_START_TIMER";
+	public static final String ACTION_TIMER_TICK  
+			= "de.syncdroid.ACTION_TIMER_TICK";
+	
+	public static final String ACTION_START_TIMER 
+			= "de.syncdroid.ACTION_START_TIMER";
 
     Integer currentPollingInterval = null;
     PendingIntent alarmTimerPendingIntent = null;
+    Boolean timerEnabled = true;
 
 	@Inject
 	private ProfileService profileService;
@@ -46,28 +50,70 @@ public class SyncService extends GuiceService {
 
     private String lastShortMessage = null;
     private String lastDetailMessage = null;
-
-    private void enableAlarmTimer() {
-        if(true || alarmTimerPendingIntent != null) {
-            return ; // already enabled
-        }
-
-        Log.d(TAG, "enable sync timer every " + currentPollingInterval + " minutes.");
-        AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+    
+    public SyncService() {
         Intent i = new Intent(this, SyncBroadcastReceiver.class);
         i.setAction(ACTION_TIMER_TICK);
 
         alarmTimerPendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
+	}
+    
+    private int getWakeupType() {
+        int type = AlarmManager.ELAPSED_REALTIME;
+        
+        SharedPreferences preferences = 
+        	PreferenceManager.getDefaultSharedPreferences(this);
+        
+        Boolean wakeUpPhone = preferences.getBoolean("wakeUpPhone", false);
+        
+        if(wakeUpPhone) {
+        	type = AlarmManager.ELAPSED_REALTIME_WAKEUP;
+        }
+        
+        return type;
+    }
 
-        mgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime(), currentPollingInterval * 1000 * 60, alarmTimerPendingIntent);
+    private void enableAlarmTimer() {
+    	disableAlarmTimer();
+    	
+        Log.d(TAG, "enable sync timer every " + 
+        		currentPollingInterval + " minutes.");
+        
+        AlarmManager mgr = (AlarmManager) getSystemService(
+        		Context.ALARM_SERVICE);        
+        
+
+        mgr.setRepeating(getWakeupType(),
+                SystemClock.elapsedRealtime(), 
+                currentPollingInterval * 1000 * 60, 
+                alarmTimerPendingIntent);
     }
 
     private void disableAlarmTimer() {
-        AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                mgr.cancel(alarmTimerPendingIntent);
+        Log.d(TAG, "disabling timer");
+        AlarmManager mgr = (AlarmManager) 
+        	getSystemService(Context.ALARM_SERVICE);
+        mgr.cancel(alarmTimerPendingIntent);
+    }
+    
+    private Integer getPollingInterval() {
+    	try {
+            SharedPreferences preferences = 
+            	PreferenceManager.getDefaultSharedPreferences(this);
+    		Integer res = Integer.valueOf(
+        		preferences.getString("updateInterval",
+                        getResources().getString(
+                        		R.string.pref_updateInterval_default)));    
 
-        alarmTimerPendingIntent = null;
+            if(res < 1) {
+            	res = 1;
+            }
+            
+            return res;
+    	} catch(Exception e) {
+    		Log.e(TAG, "error reading preferences for 'updateInterval'", e);
+    		return 1;
+    	}
     }
 
 	@Override
@@ -80,48 +126,29 @@ public class SyncService extends GuiceService {
 					+ intent.getAction() + "'");
 
 			if (intent.getAction().equals(ACTION_TIMER_TICK)) {
-				Log.d(TAG, "ACTION_TIMER_TICK");
+                
+                Integer newInterval = getPollingInterval();
 
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-                Integer newInterval = null;
-                try {
-                    newInterval = Integer.valueOf(preferences.getString("updateInterval",
-                                    getResources().getString(R.string.pref_updateInterval_default))
-                    );
-                } catch (Exception e) {
-                    Log.e(TAG, "error fetching current update interval from sharedPreferences", e);
-                    return ;
-                }
-
-                if(newInterval != null && newInterval.equals(currentPollingInterval) == false && newInterval > 0) {
-                    Log.d(TAG, "Changing Timer frequency from " + currentPollingInterval
+                if(newInterval != null && newInterval.equals(
+                		currentPollingInterval) == false && newInterval > 0) {
+                    Log.d(TAG, "changing Timer frequency from " + 
+                    		currentPollingInterval
                             + " to " + newInterval + " minutes");
 
                     currentPollingInterval = newInterval;
                     disableAlarmTimer();
                     enableAlarmTimer();
                 } else {
-                    Log.e(TAG, "not changing frequency ... still at " + currentPollingInterval + " minutes");
+                    Log.e(TAG, "not changing frequency ... still at " 
+                    	+ currentPollingInterval + " minutes");
                 }
 
 				sync();
 			} else if (intent.getAction().equals(ACTION_START_TIMER)
 					|| intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
-                Log.d(TAG, "ACTION_START_TIMER");
 
                 if(currentPollingInterval == null) {
-			        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-                    try {
-                        currentPollingInterval = Integer.valueOf(preferences.getString("updateInterval",
-                                        getResources().getString(R.string.pref_updateInterval_default))
-                        );
-
-                        if(currentPollingInterval < 1) {
-                            currentPollingInterval = 1;
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "error fetching current update interval from sharedPreferences", e);
-                    }
+                    currentPollingInterval = getPollingInterval();
                 }
 
 				enableAlarmTimer();
@@ -132,7 +159,8 @@ public class SyncService extends GuiceService {
                 ProfileStatusLog log = (ProfileStatusLog)
                         intent.getSerializableExtra(AbstractActivity.EXTRA_PROFILE_UPDATE);
 
-                if(log.getDetailMessage().equals(lastDetailMessage) && log.getShortMessage().equals(lastShortMessage)) {
+                if(log.getDetailMessage().equals(lastDetailMessage) && 
+                		log.getShortMessage().equals(lastShortMessage)) {
                     Log.d(TAG, "ignoring duplicate message");
                 } else {
                     Log.i(TAG, "saving profile status update to database ...");
@@ -145,7 +173,8 @@ public class SyncService extends GuiceService {
 
             }
 		} else {
-            Log.w(TAG, "unknown intent with action '" + intent.getAction() + "': " + intent);
+            Log.w(TAG, "unknown intent with action '" + 
+            		intent.getAction() + "': " + intent);
 		}
 	}
 

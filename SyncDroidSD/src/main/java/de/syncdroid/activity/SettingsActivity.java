@@ -53,7 +53,7 @@ public class SettingsActivity extends PreferenceActivity {
         super.onPause();
 
         Intent myIntent = new Intent(this, SyncService.class);
-		myIntent.setAction(SyncService.ACTION_TIMER_TICK);
+		myIntent.setAction(SyncService.ACTION_START_TIMER);
 		startService(myIntent);
     }
 }
