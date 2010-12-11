@@ -51,13 +51,6 @@ public class SyncService extends GuiceService {
     private String lastShortMessage = null;
     private String lastDetailMessage = null;
     
-    public SyncService() {
-        Intent i = new Intent(this, SyncBroadcastReceiver.class);
-        i.setAction(ACTION_TIMER_TICK);
-
-        alarmTimerPendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
-	}
-    
     private int getWakeupType() {
         int type = AlarmManager.ELAPSED_REALTIME;
         
@@ -119,6 +112,13 @@ public class SyncService extends GuiceService {
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
+
+		if(alarmTimerPendingIntent == null) {
+	        Intent i = new Intent(this, SyncBroadcastReceiver.class);
+	        i.setAction(ACTION_TIMER_TICK);
+	
+	        alarmTimerPendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
+		}
 		
 		// handle intents
 		if (intent != null && intent.getAction() != null) {

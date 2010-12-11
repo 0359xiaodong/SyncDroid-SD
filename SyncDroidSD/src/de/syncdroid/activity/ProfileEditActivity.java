@@ -21,6 +21,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.inject.Inject;
@@ -52,6 +53,7 @@ public class ProfileEditActivity extends AbstractActivity  {
 	@InjectView(R.id.Spinner03)				 Spinner  spnSyncTypeList;
 	@InjectView(R.id.CheckBox01)		     CheckBox  chkOnlyIfWifi;
 	@InjectView(R.id.CheckBox02)		     CheckBox  chkEnabled;
+	@InjectView(R.id.lblUsername)    		 TextView lblUsername;
 	
 	@InjectView(R.id.HostPortWrapper)	 	 LinearLayout hostnamePortWrapper;
 	@InjectView(R.id.UsernamePasswordWrapper) LinearLayout usernamePasswordWrapper;
@@ -267,11 +269,13 @@ public class ProfileEditActivity extends AbstractActivity  {
 		this.portWrapper.setVisibility(View.VISIBLE);
 		this.hostnamePortWrapper.setVisibility(View.VISIBLE);
 		this.usernamePasswordWrapper.setVisibility(View.VISIBLE);
+		this.lblUsername.setText(R.string.username);
 	}
 	
 	private void switchToDropboxView() {
 		Log.i(TAG, "switching to dropbox view");
 		this.hostnamePortWrapper.setVisibility(View.GONE);
+		this.lblUsername.setText(R.string.email);
 		
 		DropboxFileTransferClient dropboxFileTransferClient = 
 			new DropboxFileTransferClient(this);

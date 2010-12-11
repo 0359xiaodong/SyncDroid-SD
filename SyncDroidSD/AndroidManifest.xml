@@ -5,7 +5,7 @@
       android:versionName="1.0">
     <application android:icon="@drawable/icon" 
     			 android:label="@string/app_name"
-    			 android:name="de.syncdroid.SyncApplication" android:debuggable="false">
+    			 android:name="de.syncdroid.SyncApplication" android:debuggable="false" android:allowBackup="true">
         <activity android:name="de.syncdroid.activity.ProfileListActivity"
                   android:label="@string/app_name">
             <intent-filter>
@@ -59,4 +59,6 @@
 
     <!--  used for determining wifi state -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
+
+
 </manifest> 
