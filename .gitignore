@@ -1,6 +1,7 @@
 */bin/*
 */gen/*
 */target/*
+*/out/*
 BASE.*
 LOCAL.*
 REMOTE.*
