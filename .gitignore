@@ -2,6 +2,7 @@
 */gen/*
 */target/*
 */out/*
+*/local.properties
 BASE.*
 LOCAL.*
 REMOTE.*
