@@ -1,3 +1,10 @@
-SyncDroid SD is an Android App for syncronising files from your SD card with (S)FTP(s)/SCP/SMB/Dropbox.
+SyncDroid SD is an Android App for syncronising files 
+from your SD card with (S)FTP(s)/SCP/SMB/Dropbox.
 
-It is in its early stages of being stabalised for first "public" release.
+It is in its early stages of being stabalised for first 
+"public" release. Project files for Eclipse and IntelliJ 
+are provided and should both be held up to date for the 
+time being.
+
+ATTENTION: You need to create a local.properties file for 
+the builds to success. see local.propertiese
