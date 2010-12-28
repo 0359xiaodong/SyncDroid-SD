@@ -80,5 +80,16 @@
              - customize to your needs.
     -->
     <setup />
-
+	
+	<property environment="env"/>
+	<target name="preprocess" if="env.BUILD_TAG">
+	<echo>Removing debug attribute from AndroidManifest.xml</echo>
+	<replaceregexp file="AndroidManifest.xml" match="android:debuggable=&quot;.*?&quot;" replace=""/>
+	<echo>Setting release maps key</echo>
+	<replaceregexp file="res/layout/maplayout.xml" match="android:apiKey=&quot;.*?&quot;" replace="android:apiKey=&quot;XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX&quot;"/>
+	</target>
+	
+	<!-- this target is only hooking release processing of the manifest -->
+	<target name="-package-resources" depends="preprocess, android_rules.-package-resources">
+	</target>
 </project>
