@@ -1,0 +1,1 @@
+for creating production builds you need to place your certificate into this folder named "release.keystore"
