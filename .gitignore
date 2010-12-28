@@ -2,6 +2,7 @@
 */gen/*
 */target/*
 */out/*
+*/certs/*.keystore
 */local.properties
 BASE.*
 LOCAL.*

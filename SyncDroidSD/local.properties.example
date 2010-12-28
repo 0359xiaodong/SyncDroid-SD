@@ -11,7 +11,7 @@ sdk.dir=C:\\Programme NoInstall\\android-sdk-windows
 
 target=Google Inc.:Google APIs:7
 key.store=certs/release.keystore
-key.alias=notmyalias
+key.alias=syncdroid
 key.store.password=notmypassword
 key.alias.password=notmypassword
 
